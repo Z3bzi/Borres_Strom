@@ -43,22 +43,22 @@ export const SCENARIOER: Scenario[] = [
       `I løpet av helgen ga sola bare ${kWh(st.solKWh)}, mens hytta brukte ${kWh(st.forbrukKWh)}. ${generatorSetning(st)} Batteriet var lavest på ${prosent(st.minNiva)}. Ingen trengte å gjøre noe.`,
   },
   {
-    id: 'vinter',
-    tittel: 'Kald vinterdag',
-    beskrivelse: 'To personer på hytta i januar, minusgrader. Styringen forvarmer generatoren i 20 minutter før den starter.',
-    oppsett: { start: { aar: 2026, maned: 0, dag: 20, time: 7 }, varighetS: 6 * 3600, vaer: 'delvis', folk: 2, startNiva: 33, seed: 3, tempOffset: -4 },
+    id: 'kald',
+    tittel: 'Kald morgen i april',
+    beskrivelse: 'Påskehelg med to personer, frost om morgenen. Styringen forvarmer generatoren i 20 minutter før den starter.',
+    oppsett: { start: { aar: 2026, maned: 3, dag: 4, time: 6 }, varighetS: 6 * 3600, vaer: 'delvis', folk: 2, startNiva: 33, seed: 3, tempOffset: -4 },
     fart: 300,
     oppsummering: (st) =>
       `Det var kaldt, så generatoren ble forvarmet i ${varighet(st.forvarmetS)} før start. ${generatorSetning(st)} Sola ga bare ${kWh(st.solKWh)} på disse timene.`,
   },
   {
-    id: 'desember',
-    tittel: 'Ingen på hytta i desember',
-    beskrivelse: 'En uke med tom hytte og Starlink på hele tiden. Generatoren holder batteriet i live av seg selv.',
-    oppsett: { start: { aar: 2026, maned: 11, dag: 3, time: 0 }, varighetS: 7 * 24 * 3600, vaer: 'delvis', folk: 0, startNiva: 55, seed: 5 },
+    id: 'tom',
+    tittel: 'Ingen på hytta i oktober',
+    beskrivelse: 'En grå uke med tom hytte og Starlink på hele tiden. Generatoren holder batteriet i live av seg selv.',
+    oppsett: { start: { aar: 2026, maned: 9, dag: 12, time: 0 }, varighetS: 7 * 24 * 3600, vaer: 'overskyet', folk: 0, startNiva: 55, seed: 5 },
     fart: 3600,
     oppsummering: (st) =>
-      `På en uke brukte overvåkingen ${kWh(st.forbrukKWh)}, og sola ga ${kWh(st.solKWh)}. ${generatorSetning(st)} Det er prisen for å ha Starlink på hele vinteren, se avsnittet «Hele året».`,
+      `På en uke brukte overvåkingen ${kWh(st.forbrukKWh)}, og sola ga ${kWh(st.solKWh)}. ${generatorSetning(st)} Ingen trengte å gjøre noe. Fra november til mars er anlegget avslått.`,
   },
   {
     id: 'starterikke',

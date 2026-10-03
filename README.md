@@ -55,6 +55,7 @@ Simuleringskjernen i `src/sim/` er ren TypeScript uten DOM, så den kan testes o
 
 - Solcelleeffekt: 2 kWp, samme som regnearket (`PV_KWP` i `src/sim/data.ts`). Endres tallet der, regnes alle tall på siden om.
 - Ikke-vitale laster ved lastfrakobling: vannpumpe, ladere, nettbrett, verktøy og vedkløyver.
+- Hytta og anlegget er avslått fra november til mars (`ANLEGG_AV` i `src/sim/data.ts`): null forbruk, ingen generator.
 - Månedlig testkjøring den 1. i måneden kl. 12:00.
 - Batteristyringen slår av vekselretteren under 10 % og på igjen over 15 %.
 

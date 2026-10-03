@@ -130,9 +130,19 @@ export const FORBRUK_DC_PER_DOGN =
 
 /**
  * Ark «Bruksmønster»: dager med folk per måned. Mars og oktober mangler i arket;
- * her antas hytta lukket (0 dager). [TODO Sebastian: bekreft bruk i mars og oktober]
+ * her antas hytta lukket i mars og brukt som september i oktober (anslag).
  */
 export const DAGER_MED_FOLK = [0, 0, 0, 4, 8, 23, 31, 25, 8, 0, 0, 0] as const;
+
+/**
+ * Hytta og hele anlegget er avslått fra november til mars (Sebastians valg 3. oktober 2026).
+ * Da er det ikke noe forbruk, heller ikke standby, og generatoren går ikke.
+ * Regnearket regner fortsatt med Starlink på hele vinteren; det avviket er med vilje.
+ */
+export const ANLEGG_AV = [true, true, true, false, false, false, false, false, false, false, true, true] as const;
+
+/** Første og siste måned anlegget er på (0 = januar) */
+export const SESONG = { fra: 3, til: 9 } as const;
 
 export interface ManedsBalanse {
   maned: number;
@@ -142,17 +152,20 @@ export interface ManedsBalanse {
   produksjonKWh: number;
   balanseKWh: number;
   interpolert: boolean;
+  /** Anlegget er avslått denne måneden (november–mars) */
+  avslaatt: boolean;
 }
 
-/** Månedlig energibalanse som i arket Bruksmønster, regnet med valgt solcelleeffekt */
+/** Månedlig energibalanse som i arket Bruksmønster, regnet med valgt solcelleeffekt. Avslåtte måneder har null forbruk. */
 export function manedsBalanse(kwp = PV_KWP): ManedsBalanse[] {
   return SOL_KRAGERO.map((m) => {
-    const folk = DAGER_MED_FOLK[m.maned]!;
-    const forbruk = folk * FORBRUK_DC_PER_DOGN + (m.dager - folk) * STANDBY_W * 24 / 1000;
+    const av = ANLEGG_AV[m.maned]!;
+    const folk = av ? 0 : DAGER_MED_FOLK[m.maned]!;
+    const forbruk = av ? 0 : folk * FORBRUK_DC_PER_DOGN + (m.dager - folk) * STANDBY_W * 24 / 1000;
     const prod = produksjonPerDogn(m.maned, kwp) * m.dager;
     return {
       maned: m.maned, dager: m.dager, dagerMedFolk: folk,
-      forbrukKWh: forbruk, produksjonKWh: prod, balanseKWh: prod - forbruk, interpolert: m.interpolert,
+      forbrukKWh: forbruk, produksjonKWh: prod, balanseKWh: prod - forbruk, interpolert: m.interpolert, avslaatt: av,
     };
   });
 }
@@ -166,13 +179,13 @@ export interface VinterLosning {
   liter: number;
 }
 
-/** Overvåkingsløsninger om vinteren (nov–feb), som i arket Bruksmønster rad 30–33 */
+/** Hva det ville kostet å ha overvåking på om vinteren (nov–feb), som i arket Bruksmønster rad 30–33. Vises bare som tilleggsinformasjon, siden anlegget er avslått da. */
 export function vinterLosninger(kwp = PV_KWP): VinterLosning[] {
   const vinter = [0, 1, 10, 11];
   const dager = vinter.reduce((s, m) => s + SOL_KRAGERO[m]!.dager, 0);
   const prod = vinter.reduce((s, m) => s + produksjonPerDogn(m, kwp) * SOL_KRAGERO[m]!.dager, 0);
   const alt: [string, number][] = [
-    ['Starlink på hele tiden (planen)', STANDBY_W],
+    ['Starlink på hele tiden', STANDBY_W],
     ['Starlink Mini på likestrøm', 38],
     ['4G-ruter i stedet', 13],
     ['Starlink 1 time per døgn (timer)', (70 + 12 + 25) / 24 + 8],

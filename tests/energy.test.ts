@@ -67,16 +67,19 @@ describe('energibalanse (regneark)', () => {
     expect(produksjonPerDogn(11)).toBeLessThan(115 * 24 / 1000);
   });
 
-  it('månedsbalanse stemmer med arket Bruksmønster ved 2 kWp', () => {
+  it('månedsbalanse stemmer med arket Bruksmønster ved 2 kWp, med anlegget avslått november–mars', () => {
     expect(PV_KWP).toBe(2);
     const b = manedsBalanse(2);
-    expect(b[0]!.forbrukKWh).toBeCloseTo(85.56, 1);
+    expect(b[0]!.forbrukKWh).toBe(0);
+    expect(b[0]!.avslaatt).toBe(true);
     expect(b[0]!.produksjonKWh).toBeCloseTo(19.44, 1);
+    expect(b[3]!.avslaatt).toBe(false);
+    expect(b[8]!.forbrukKWh).toBeCloseTo(114.33, 1);
     expect(b[6]!.produksjonKWh).toBeCloseTo(285.12, 1);
     expect(b[6]!.forbrukKWh).toBeCloseTo(207.74, 1);
   });
 
-  it('vinter med Starlink 24/7: ca. 204 kWh underskudd og ca. 90 l diesel ved 2 kWp', () => {
+  it('hvis Starlink likevel sto på om vinteren: ca. 204 kWh underskudd og ca. 90 l diesel ved 2 kWp', () => {
     const v = vinterLosninger(2);
     expect(v[0]!.underskuddKWh).toBeCloseTo(203.58, 1);
     expect(v[0]!.liter).toBeCloseTo(90.48, 1);
@@ -114,15 +117,15 @@ describe('hele anlegget', () => {
     expect(h.logg.some((l) => l.tekst.includes('over 90 %') && l.tekst.includes('stopper'))).toBe(true);
   });
 
-  it('kald vinterdag: forvarming 20 min før start', () => {
-    const h = kjor('vinter');
+  it('kald morgen i april: forvarming 20 min før start', () => {
+    const h = kjor('kald');
     expect(h.stats.forvarmetS).toBeGreaterThanOrEqual(1200);
     expect(h.stats.starter).toBeGreaterThanOrEqual(1);
     expect(h.logg.some((l) => l.tekst.includes('Forvarmingen er ferdig'))).toBe(true);
   });
 
-  it('tom hytte i desember: generatoren holder batteriet i live', () => {
-    const h = kjor('desember');
+  it('tom hytte i oktober: generatoren holder batteriet i live', () => {
+    const h = kjor('tom');
     expect(h.stats.starter).toBeGreaterThanOrEqual(2);
     expect(h.stats.minNiva).toBeGreaterThan(20);
     expect(h.stats.stromlosS).toBe(0);

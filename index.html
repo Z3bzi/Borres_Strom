@@ -162,7 +162,7 @@
       <div class="wrap">
         <p class="overline">Prøv selv</p>
         <h2 id="sim-tittel">Simuleringen</h2>
-        <p class="lead">Her kan du leve et døgn eller en uke på hytta og se hvordan anlegget håndterer sol, skyer, folk, tom hytte, vinter og feil. Styringen i simuleringen følger nøyaktig de samme reglene som skal programmeres inn i den virkelige styringsboksen.</p>
+        <p class="lead">Her kan du leve et døgn eller en uke på hytta og se hvordan anlegget håndterer sol, skyer, folk, tom hytte, kulde og feil. Styringen i simuleringen følger nøyaktig de samme reglene som skal programmeres inn i den virkelige styringsboksen.</p>
         <div id="sim-app" class="sim-app">
           <div class="sim-scenarioer" id="sim-scenarioer">
             <h3>Velg et scenario</h3>
@@ -361,12 +361,12 @@
           <article class="kort hva-hvis">
             <h3>Hva skjer hvis det er lite diesel?</h3>
             <p>Tanken har en nivåvakt. Ved lavt nivå sperres generatoren og det sendes alarm, så den aldri kjører tanken tom og suger luft.</p>
-            <a class="knapp lenke" href="#simulering" data-scenario="desember">Se vinterdrift i simuleringen</a>
+            <a class="knapp lenke" href="#simulering" data-scenario="tom">Se en tom uke i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
             <h3>Hva skjer hvis ingen er på hytta?</h3>
-            <p>Anlegget går som før. Generatoren starter når batteriet blir lavt, stopper når det er fullt, og kjører en kort test hver måned. Alt du trenger å gjøre, er å se på telefonen innimellom.</p>
-            <a class="knapp lenke" href="#simulering" data-scenario="desember">Se det i simuleringen</a>
+            <p>Anlegget går som før i sesongen (april til oktober). Generatoren starter når batteriet blir lavt, stopper når det er fullt, og kjører en kort test hver måned. Alt du trenger å gjøre, er å se på telefonen innimellom. Fra november til mars er hele anlegget avslått.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="tom">Se det i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
             <h3>Hva skjer hvis noen trykker på nødstoppen?</h3>
@@ -410,13 +410,17 @@
       <div class="wrap">
         <p class="overline">Energibalanse</p>
         <h2 id="aaret-tittel">Hele året</h2>
-        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og Starlink på hele vinteren.</p>
+        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og Starlink på når hytta står tom i sesongen. Fra november til mars er hytta og hele anlegget avslått.</p>
         <div id="aarsdiagram" class="aarsdiagram"></div>
         <p class="liten" id="aarsnotat"></p>
-        <h3>Vinteren: Starlink på hele tiden koster diesel</h3>
-        <p>Når hytta står tom, bruker Starlink, ruteren, styringen og vekselretteren til sammen ca. 115 W døgnet rundt. Fra november til februar er det for lite sol til å dekke det, så generatoren må gjøre jobben. Alternativene under bruker mye mindre og går nesten i null med sola. Dette er et ærlig valg vi kan ta sammen.</p>
-        <div id="vintertabell"></div>
-        <p class="liten" id="vinternotat"></p>
+        <h3>Vinteren: anlegget er avslått</h3>
+        <p>Fra november til mars er hytta stengt, og hele anlegget slås av: ingen Starlink, ingen standby, ingen generator og ingen diesel. Batteriet settes fullt i dvale, og i april skrus alt på igjen. Når ingen er der i sesongen, bruker Starlink, ruteren, styringen og vekselretteren til sammen ca. 115 W døgnet rundt, og det dekker sola stort sett.</p>
+        <details>
+          <summary>Hva om vi likevel ville hatt Starlink på om vinteren?</summary>
+          <p>Da hadde det vært for lite sol til å dekke 115 W døgnet rundt, og generatoren måtte gjort jobben. Tabellen viser hva det ville kostet i diesel, og hva mindre strømkrevende alternativer ville gitt.</p>
+          <div id="vintertabell"></div>
+          <p class="liten" id="vinternotat"></p>
+        </details>
       </div>
     </section>
 
@@ -474,11 +478,11 @@
         <div>
           <h2>Spørsmål og svar</h2>
           <details><summary>Hvor mye støy blir det fra generatoren?</summary><p>Den står i eget skur ca. 30 m fra hytta, med lyddempet kappe. Modellen er ikke valgt, så støynivået er ikke kjent ennå. Om sommeren er det beregnet at den nesten aldri trenger å gå.</p></details>
-          <details><summary>Hvor ofte går generatoren?</summary><p>Fra april til september er det beregnet at sola dekker forbruket, så generatoren står stort sett stille. Om vinteren, med Starlink på hele tiden, går den noen timer annenhver eller tredje hver dag. Prøv scenarioet «Ingen på hytta i desember».</p></details>
+          <details><summary>Hvor ofte går generatoren?</summary><p>Fra april til september er det beregnet at sola dekker forbruket, så generatoren står stort sett stille. Den starter først i lengre perioder med grått vær, typisk en grå helg i september eller en tom uke i oktober. Prøv scenarioet «Ingen på hytta i oktober». Fra november til mars er anlegget avslått.</p></details>
           <details><summary>Hva om noe ryker mens ingen er der?</summary><p>Alle feil gir stopp, ikke start. Du får alarm på telefonen, og hytta går videre på batteri og sol så lenge det rekker. I verste fall slår batteristyringen av strømmen for å beskytte batteriet, og alt må startes opp igjen manuelt. Da må noen reise ut.</p></details>
           <details><summary>Kan vi bygge ut senere?</summary><p>Ja. Flere solceller eller et større batteri er bare å koble til. Styringen har ledige inn- og utganger.</p></details>
           <details><summary>Hvor sikre er tallene?</summary><p>Alle tall er beregnet ut fra antakelser om forbruk og soldata for Kragerø. De er merket som beregnet eller anslått på siden. Virkelig forbruk og vær vil avvike, og det er derfor anlegget er dimensjonert med 25 % margin og med en generator som tar resten.</p></details>
-          <details><summary>Må vi ha Starlink på hele vinteren?</summary><p>Nei. Det er et valg. Se avsnittet «Hele året» for alternativene og hvor mye diesel de sparer.</p></details>
+          <details><summary>Hva skjer om vinteren?</summary><p>Hytta er stengt fra november til mars, og hele anlegget slås av. Da er det ikke noe forbruk, ingen generatorkjøring og ingen diesel. Se avsnittet «Hele året».</p></details>
         </div>
       </div>
     </section>

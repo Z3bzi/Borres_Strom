@@ -172,10 +172,10 @@ export function vinterLosninger(kwp = PV_KWP): VinterLosning[] {
   const dager = vinter.reduce((s, m) => s + SOL_KRAGERO[m]!.dager, 0);
   const prod = vinter.reduce((s, m) => s + produksjonPerDogn(m, kwp) * SOL_KRAGERO[m]!.dager, 0);
   const alt: [string, number][] = [
-    ['Starlink på hele tiden (som planlagt)', STANDBY_W],
-    ['Starlink Mini på likestrøm, hele tiden', 38],
-    ['4G-ruter, hele tiden', 13],
-    ['Starlink 1 time per døgn på timer', (70 + 12 + 25) / 24 + 8],
+    ['Starlink på hele tiden (planen)', STANDBY_W],
+    ['Starlink Mini på likestrøm', 38],
+    ['4G-ruter i stedet', 13],
+    ['Starlink 1 time per døgn (timer)', (70 + 12 + 25) / 24 + 8],
   ];
   return alt.map(([navn, effektW]) => {
     const forbruk = effektW * 24 / 1000 * dager;

@@ -142,6 +142,9 @@ export class Hytte {
   private sol!: Soldag;
   private hendelser: PlanlagtHendelse[];
   private sisteTilstand: Tilstand | null = null;
+  private sumSol = 0;
+  private sumForbruk = 0;
+  private sumN = 0;
 
   constructor(public oppsett: SimOppsett) {
     const s = oppsett.start;
@@ -357,8 +360,13 @@ export class Hytte {
     this.loggSignaler(s);
     this.prev = s;
 
+    // Prøver hvert minutt (snitt av effekt over minuttet, så korte startstrømmer ikke dominerer)
+    this.sumSol += solW;
+    this.sumForbruk += forbruk.totalW;
+    this.sumN++;
     if (this.t % 60 === 0) {
-      this.prover.push({ t: this.t, niva: this.niva, solW, forbrukW: forbruk.totalW, generator: s.I1, frakoblet: !s.q2, alarm: s.now });
+      this.prover.push({ t: this.t, niva: this.niva, solW: this.sumSol / this.sumN, forbrukW: this.sumForbruk / this.sumN, generator: s.I1, frakoblet: !s.q2, alarm: s.now });
+      this.sumSol = this.sumForbruk = this.sumN = 0;
     }
 
     const tilstand: Tilstand = {

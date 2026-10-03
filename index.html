@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Forslag til nytt strømanlegg på hytta på Børresholmen: solceller, batteri og generator som starter av seg selv. Med interaktiv simulering." />
+  <meta name="color-scheme" content="light" />
+  <title>Strøm på Børresholmen</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23e8a33d'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <a class="skip" href="#simulering">Hopp til simuleringen</a>
+
+  <header class="topbar">
+    <nav class="mininav" aria-label="Innhold">
+      <a href="#topp" class="brand">Børresholmen</a>
+      <ul>
+        <li><a href="#idag">I dag og med nytt anlegg</a></li>
+        <li><a href="#slik">Slik fungerer det</a></li>
+        <li><a href="#simulering">Simuleringen</a></li>
+        <li><a href="#trygghet">Trygghet</a></li>
+        <li><a href="#overvaking">Fjernovervåking</a></li>
+        <li><a href="#aaret">Hele året</a></li>
+        <li><a href="#gjennomtenkt">Gjennomtenkt</a></li>
+        <li><a href="#ordliste">Ordliste og spørsmål</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="topp">
+    <!-- 1. Intro -->
+    <section class="hero" aria-labelledby="hero-tittel">
+      <div class="wrap hero-grid">
+        <div class="hero-tekst">
+          <p class="overline">Forslag til nytt strømanlegg på hytta</p>
+          <h1 id="hero-tittel">Strøm på hytta som bare fungerer, også når ingen er der.</h1>
+          <p class="lead">Solceller, et batteri og en dieselgenerator i eget skur som starter av seg selv når batteriet blir lavt. Alt styres automatisk, og du kan se at alt er i orden fra telefonen hjemme.</p>
+          <div class="cta">
+            <a class="knapp primær" href="#simulering">Prøv simuleringen</a>
+            <a class="knapp sekundær" href="#slik">Les hvordan det fungerer</a>
+          </div>
+          <p class="liten">Alle tall på siden er beregnet, ikke målt. De kommer fra Sebastians regneark og kan endre seg når utstyret velges.</p>
+        </div>
+        <figure class="hero-ill" aria-label="Tegning av hytta på holmen med solceller, sjø, sol og generatorskur 30 meter unna">
+          <svg viewBox="0 0 640 400" role="img" aria-hidden="true" class="ill-hytte">
+            <defs>
+              <linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#dff0f8" />
+                <stop offset="1" stop-color="#f6f3ec" />
+              </linearGradient>
+              <linearGradient id="sjo" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#7fb3c9" />
+                <stop offset="1" stop-color="#3f7f9c" />
+              </linearGradient>
+              <linearGradient id="granitt" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#c9b8ad" />
+                <stop offset="1" stop-color="#8f8178" />
+              </linearGradient>
+            </defs>
+            <rect width="640" height="400" fill="url(#himmel)" />
+            <g class="sol-ill">
+              <circle cx="520" cy="86" r="34" fill="#f2b84b" />
+              <g stroke="#f2b84b" stroke-width="5" stroke-linecap="round" opacity=".7">
+                <line x1="520" y1="30" x2="520" y2="44" /><line x1="520" y1="128" x2="520" y2="142" />
+                <line x1="464" y1="86" x2="478" y2="86" /><line x1="562" y1="86" x2="576" y2="86" />
+                <line x1="480" y1="46" x2="490" y2="56" /><line x1="550" y1="116" x2="560" y2="126" />
+                <line x1="560" y1="46" x2="550" y2="56" /><line x1="490" y1="116" x2="480" y2="126" />
+              </g>
+            </g>
+            <rect y="260" width="640" height="140" fill="url(#sjo)" />
+            <g stroke="#ffffff" stroke-opacity=".45" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M20 300 q20 -8 40 0 t40 0" /><path d="M560 330 q20 -8 40 0 t40 0" />
+              <path d="M90 360 q20 -8 40 0 t40 0" /><path d="M470 375 q20 -8 40 0 t40 0" />
+            </g>
+            <path d="M40 300 C 90 230, 160 215, 250 220 C 330 224, 380 232, 450 228 C 520 224, 590 240, 620 290 L 640 300 L 640 320 L 0 320 Z" fill="url(#granitt)" />
+            <path d="M120 236 c30 -10 60 -10 90 -2" stroke="#7a6d65" stroke-width="2" fill="none" opacity=".5" />
+            <path d="M400 232 c30 -8 60 -8 90 -2" stroke="#7a6d65" stroke-width="2" fill="none" opacity=".5" />
+            <g>
+              <polygon points="160,240 160,170 240,120 320,170 320,240" fill="#9c3a2c" />
+              <polygon points="150,172 240,112 330,172 330,182 240,124 150,182" fill="#3b2b26" />
+              <rect x="248" y="130" width="14" height="30" fill="#4c3b36" />
+              <polygon points="166,172 232,130 232,150 182,182" fill="#24456b" stroke="#dbe9f0" stroke-width="2" />
+              <polygon points="176,176 196,164 196,176 186,182" fill="none" stroke="#dbe9f0" stroke-width="1" />
+              <rect x="185" y="190" width="24" height="26" fill="#dbe9f0" stroke="#3b2b26" stroke-width="2" />
+              <rect x="225" y="190" width="24" height="26" fill="#dbe9f0" stroke="#3b2b26" stroke-width="2" />
+              <rect x="268" y="196" width="22" height="44" fill="#3b2b26" />
+              <rect x="150" y="238" width="180" height="6" fill="#6b5a52" />
+            </g>
+            <g>
+              <polygon points="480,236 480,200 510,184 540,200 540,236" fill="#7b8a94" />
+              <polygon points="474,202 510,180 546,202 546,208 510,188 474,208" fill="#3f4a52" />
+              <rect x="502" y="212" width="16" height="24" fill="#3f4a52" />
+              <rect x="526" y="190" width="6" height="12" fill="#3f4a52" />
+              <text x="510" y="256" text-anchor="middle" font-size="13" fill="#2f3a42">Generatorskur</text>
+            </g>
+            <g stroke="#2f6f8f" stroke-width="2" stroke-dasharray="6 5" fill="none">
+              <path d="M330 232 L 480 228" />
+            </g>
+            <text x="405" y="212" text-anchor="middle" font-size="14" fill="#2f6f8f" font-weight="600">ca. 30 m</text>
+            <g fill="#3d6b4a">
+              <polygon points="80,238 95,200 110,238" /><polygon points="88,222 95,190 102,222" />
+              <polygon points="440,236 452,210 464,236" /><polygon points="446,222 452,204 458,222" />
+              <polygon points="580,250 592,220 604,250" />
+            </g>
+          </svg>
+          <figcaption class="liten">Skisse. [TODO Sebastian: bilde av hytta og dagens anlegg kan erstatte eller stå ved siden av denne]</figcaption>
+        </figure>
+      </div>
+      <div class="wrap nokkeltall" aria-label="Nøkkeltall, beregnet">
+        <div class="tall"><strong>4,8&nbsp;<button type="button" class="term" data-tip="Kilowattime, en mengde strøm. 1 kWh er det en liten panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta tent i ti timer, eller lader en mobil rundt 60 ganger.">kWh</button></strong><span>forbruk per døgn med folk på hytta</span></div>
+        <div class="tall"><strong>8,4&nbsp;kWh</strong><span>batteri, nok til et døgn uten sol</span></div>
+        <div class="tall"><strong>2&nbsp;<button type="button" class="term" data-tip="Kilowatt-peak: solcellenes merkeeffekt, altså hvor mye de gir i full sol. 2 kWp er omtrent fem store paneler.">kWp</button></strong><span>solceller, dekker alt fra april til september</span></div>
+        <div class="tall"><strong>Automatisk</strong><span>generatorstart, forvarming og varsling</span></div>
+      </div>
+    </section>
+
+    <!-- 2. I dag og med nytt anlegg -->
+    <section id="idag" class="seksjon" aria-labelledby="idag-tittel">
+      <div class="wrap">
+        <p class="overline">Hvorfor</p>
+        <h2 id="idag-tittel">I dag og med nytt anlegg</h2>
+        <p class="lead">I dag har hytta et lite solcelleanlegg som holder til lading og lys, en løs generator til de tunge tingene, og vann som pumpes for hånd opp på loftstanken. Det fungerer, men det krever at noen er der og passer på.</p>
+        <p class="liten">[TODO Sebastian: panelstørrelse, batteritype og -størrelse på dagens anlegg]</p>
+        <div class="sammenligning" role="table" aria-label="Sammenligning av dagens anlegg og nytt anlegg">
+          <div class="rad hode" role="row"><span role="columnheader">Hverdagen</span><span role="columnheader">I dag</span><span role="columnheader">Med nytt anlegg</span></div>
+          <div class="rad" role="row"><span role="rowheader">Lading og lys</span><span role="cell">Går, så lenge det har vært sol.</span><span role="cell" class="ny">Går alltid. Blir batteriet lavt, starter generatoren selv.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Kjøleskap</span><span role="cell">[TODO Sebastian: har hytta kjøleskap i dag, og går det?]</span><span role="cell" class="ny">Står på hele tiden, også om natta og i grått vær.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Vann</span><span role="cell">Håndpumpe fra brønnen opp til loftstanken.</span><span role="cell" class="ny">Elektrisk pumpe. Fylles automatisk.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Verktøy og vedkløyver</span><span role="cell">Løs generator som må startes manuelt, og som er for svak til vedkløyveren.</span><span role="cell" class="ny">Vekselretteren tåler motorstart på vedkløyveren (beregnet toppeffekt ca. 9,4 kW). Går rett fra batteriet.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Internett</span><span role="cell">Ingen.</span><span role="cell" class="ny">Starlink på hele tiden, til folk og til overvåking.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Grå helg i september</span><span role="cell">Strømmen tar slutt når batteriet er tomt.</span><span role="cell" class="ny">Generatoren starter av seg selv, lader batteriet og stopper igjen. Prøv scenarioet «Overskyet helg i september».</span></div>
+          <div class="rad" role="row"><span role="rowheader">Når du kommer</span><span role="cell">Usikkert hvor mye strøm det er.</span><span role="cell" class="ny">Batteriet er holdt oppe mens hytta sto tom.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Når ingen er der</span><span role="cell">Ingen vet hvordan det står til.</span><span role="cell" class="ny">Status og alarmer på telefonen, hjemmefra.</span></div>
+        </div>
+        <p class="liten">Sammenligningen er kvalitativ. Hva det nye anlegget faktisk klarer, er beregnet, ikke målt, og vises i simuleringen lenger ned.</p>
+      </div>
+    </section>
+
+    <!-- 3. Slik fungerer det -->
+    <section id="slik" class="seksjon alt" aria-labelledby="slik-tittel">
+      <div class="wrap">
+        <p class="overline">Oversikt</p>
+        <h2 id="slik-tittel">Slik fungerer det</h2>
+        <div class="slik-grid">
+          <figure class="flow-figur">
+            <div id="flow-demo" class="flow"></div>
+            <figcaption id="flow-demo-tekst" class="flow-tekst" aria-live="polite"></figcaption>
+          </figure>
+          <ol class="steg">
+            <li><strong>Sola lader batteriet.</strong> Solcellene på taket (planlagt ca. 2 kWp) lader batteriet gjennom en <button type="button" class="term" data-tip="En boks mellom solcellene og batteriet som sørger for at batteriet lades riktig og ikke overlades.">laderegulator</button>. Fra april til september er det beregnet at sola dekker alt forbruket.</li>
+            <li><strong>Batteriet forsyner hytta.</strong> Et batteri på ca. 8,4 kWh holder et døgns forbruk med folk på hytta. En <button type="button" class="term" data-tip="Lager vanlig 230 V strøm av batteriets likestrøm, så alt vanlig utstyr kan brukes.">vekselretter</button> gjør batteristrømmen om til vanlig 230 V.</li>
+            <li><strong>Generatoren tar over når sola ikke strekker til.</strong> Er batteriet under 30 % i fem minutter, starter styringen dieselgeneratoren i skuret ca. 30 m unna. Den lader med ca. 2,5 kW og stopper når batteriet er over 90 %.</li>
+            <li><strong>Styringen passer på.</strong> En liten, robust <button type="button" class="term" data-tip="En liten industriell styringsboks som leser av batterinivå, temperatur og sikkerhetssignaler, og som styrer generatoren etter faste regler. Samme type brukes i f.eks. ventilasjonsanlegg og pumpestasjoner.">styringsboks</button> leser batterinivå og temperatur, forvarmer generatoren når det er kaldt, kobler fra unødvendige laster hvis batteriet blir svært lavt, og sender alarm hvis noe er galt.</li>
+            <li><strong>Du ser alt hjemmefra.</strong> Starlink står på hele tiden, så batterinivå, generatorstatus og alarmer kommer til telefonen.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Simuleringen -->
+    <section id="simulering" class="seksjon sim" aria-labelledby="sim-tittel">
+      <div class="wrap">
+        <p class="overline">Prøv selv</p>
+        <h2 id="sim-tittel">Simuleringen</h2>
+        <p class="lead">Her kan du leve et døgn eller en uke på hytta og se hvordan anlegget håndterer sol, skyer, folk, tom hytte, vinter og feil. Styringen i simuleringen følger nøyaktig de samme reglene som skal programmeres inn i den virkelige styringsboksen.</p>
+        <div id="sim-app" class="sim-app">
+          <div class="sim-scenarioer" id="sim-scenarioer">
+            <h3>Velg et scenario</h3>
+            <div class="chips" role="group" aria-label="Ferdige scenarioer" id="scenario-knapper"></div>
+            <p id="scenario-beskrivelse" class="scenario-beskrivelse"></p>
+          </div>
+
+          <div class="sim-topp">
+            <div class="klokke" id="sim-klokke" aria-live="off">
+              <span class="klokke-dato" id="klokke-dato">–</span>
+              <span class="klokke-tid" id="klokke-tid">–</span>
+              <span class="klokke-vaer" id="klokke-vaer">–</span>
+            </div>
+            <div class="transport" id="sim-transport" role="group" aria-label="Spill av og fart">
+              <button type="button" class="knapp primær" id="knapp-spill" aria-pressed="false">▶ Spill av</button>
+              <button type="button" class="knapp sekundær" id="knapp-steg" title="Ett minutt fram">+1 min</button>
+              <div class="segment" role="group" aria-label="Fart">
+                <button type="button" data-fart="60" aria-pressed="false">1 min/s</button>
+                <button type="button" data-fart="600" aria-pressed="true">10 min/s</button>
+                <button type="button" data-fart="3600" aria-pressed="false">1 t/s</button>
+              </div>
+              <button type="button" class="knapp lenke" id="knapp-nullstill">Start på nytt</button>
+            </div>
+          </div>
+
+          <div class="sim-status">
+            <div class="kort batteri-kort" id="sim-batteri">
+              <h3>Batterinivå</h3>
+              <div class="batteri-rad">
+                <div id="gauge" class="gauge"></div>
+                <div class="batteri-tekst">
+                  <div class="stor" id="batteri-prosent">–</div>
+                  <div class="liten" id="batteri-kwh">–</div>
+                  <ul class="terskler">
+                    <li><span class="merke m90"></span>Over 90 %: generatoren stopper</li>
+                    <li><span class="merke m40"></span>Over 40 %: alle laster på igjen</li>
+                    <li><span class="merke m30"></span>Under 30 % i 5 min: generatoren starter</li>
+                    <li><span class="merke m15"></span>Under 15 %: pumpe, ladere og verktøy kobles fra</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="kort flis sol" id="sim-sol">
+              <h3>Sol nå</h3>
+              <div class="stor" id="sol-naa">–</div>
+              <div class="liten" id="sol-info">–</div>
+            </div>
+            <div class="kort flis forbruk">
+              <h3>Forbruk nå</h3>
+              <div class="stor" id="forbruk-naa">–</div>
+              <div class="liten" id="forbruk-info">–</div>
+            </div>
+            <div class="kort flis generator" id="sim-generator">
+              <h3>Generator</h3>
+              <div class="stor" id="generator-naa">–</div>
+              <div class="liten" id="generator-info">–</div>
+            </div>
+            <div class="kort flis laster">
+              <h3>Laster</h3>
+              <div class="stor" id="laster-naa">–</div>
+              <div class="liten" id="laster-info">–</div>
+            </div>
+            <div class="kort flis temperatur">
+              <h3>Temperatur i skuret</h3>
+              <div class="stor" id="temp-naa">–</div>
+              <div class="liten" id="temp-info">–</div>
+            </div>
+            <div class="kort flis alarm" id="sim-alarm">
+              <h3>Alarm</h3>
+              <div class="stor" id="alarm-naa">–</div>
+              <div class="liten" id="alarm-info">–</div>
+              <button type="button" class="knapp liten-knapp" id="knapp-kvitter" hidden>Kvitter alarm</button>
+            </div>
+          </div>
+
+          <div class="sim-midt">
+            <div class="kort">
+              <h3>Energiflyt nå</h3>
+              <div id="flow-live" class="flow"></div>
+            </div>
+            <div class="kort">
+              <h3>Forløp</h3>
+              <div class="serier" aria-hidden="true">
+                <span class="serie batteri">Batterinivå</span>
+                <span class="serie sol">Sol</span>
+                <span class="serie forbruk">Forbruk</span>
+                <span class="serie generator">Generator går</span>
+                <span class="serie alarmserie">Alarm</span>
+              </div>
+              <canvas id="tidslinje" class="tidslinje" role="img" aria-label="Forløp av batterinivå, solproduksjon og forbruk over simuleringen"></canvas>
+            </div>
+          </div>
+
+          <div class="sim-faner">
+            <div class="fane-knapper" role="tablist" aria-label="Detaljer">
+              <button type="button" role="tab" id="fane-logg" aria-selected="true" aria-controls="panel-logg">Hendelser</button>
+              <button type="button" role="tab" id="fane-telefon" aria-selected="false" aria-controls="panel-telefon">Telefon</button>
+              <button type="button" role="tab" id="fane-innstillinger" aria-selected="false" aria-controls="panel-innstillinger">Innstillinger</button>
+            </div>
+            <div class="paneler">
+              <div class="kort panel" role="tabpanel" id="panel-logg" aria-labelledby="fane-logg">
+                <h3>Hendelser</h3>
+                <p class="liten">Hver linje forklarer hva styringen gjør, og hvorfor. Nyeste øverst.</p>
+                <ol class="logg" id="logg" aria-live="polite" aria-relevant="additions"></ol>
+              </div>
+              <div class="kort panel" role="tabpanel" id="panel-telefon" aria-labelledby="fane-telefon" hidden>
+                <h3>Telefonen</h3>
+                <p class="liten">Slik ser status og varsler ut på telefonen hjemme.</p>
+                <div id="telefon-sim" class="telefon"></div>
+              </div>
+              <div class="kort panel" role="tabpanel" id="panel-innstillinger" aria-labelledby="fane-innstillinger" hidden>
+                <h3>Innstillinger</h3>
+                <div class="innstillinger">
+                  <label>Dato <input type="date" id="inn-dato" /></label>
+                  <div class="felt">
+                    <span id="folk-label">Folk på hytta</span>
+                    <div class="stepper" role="group" aria-labelledby="folk-label">
+                      <button type="button" id="folk-minus" aria-label="Færre personer">−</button>
+                      <output id="folk-verdi" for="folk-minus folk-pluss">6</output>
+                      <button type="button" id="folk-pluss" aria-label="Flere personer">+</button>
+                    </div>
+                  </div>
+                  <div class="felt">
+                    <span id="vaer-label">Vær</span>
+                    <div class="segment" role="group" aria-labelledby="vaer-label" id="vaer-knapper">
+                      <button type="button" data-vaer="sol" aria-pressed="false">☀️ Sol</button>
+                      <button type="button" data-vaer="delvis" aria-pressed="false">⛅ Delvis skyet</button>
+                      <button type="button" data-vaer="overskyet" aria-pressed="false">☁️ Overskyet</button>
+                    </div>
+                  </div>
+                  <label>Batterinivå ved start: <output id="niva-verdi">60 %</output>
+                    <input type="range" id="inn-niva" min="5" max="100" step="1" value="60" />
+                  </label>
+                  <p class="liten">Ny dato eller nytt startnivå starter simuleringen på nytt. Vær og folk kan endres underveis.</p>
+                </div>
+                <h3>Hendelser du kan utløse</h3>
+                <div class="hendelser" id="hendelser">
+                  <button type="button" data-hendelse="kloyv">🪵 Kløyv ved nå</button>
+                  <button type="button" data-hendelse="nodstopp" aria-pressed="false">⛔ Nødstopp</button>
+                  <button type="button" data-hendelse="co" aria-pressed="false">🔔 CO-alarm</button>
+                  <button type="button" data-hendelse="diesel" aria-pressed="false">⛽ Lite diesel</button>
+                  <button type="button" data-hendelse="nostart" aria-pressed="false">🔧 Generatoren starter ikke</button>
+                  <button type="button" data-hendelse="overvaking" aria-pressed="false">📡 Mister kontakt med overvåkingen</button>
+                </div>
+                <p class="liten">Knappene med av/på-tilstand står på til du trykker igjen, som en ekte feil som må rettes.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="kort oppsummering" id="oppsummering" hidden>
+            <h3>Oppsummering</h3>
+            <p id="oppsummering-tekst"></p>
+            <div class="cta">
+              <button type="button" class="knapp sekundær" id="knapp-videre">Kjør ett døgn til</button>
+              <button type="button" class="knapp primær" id="knapp-neste">Neste scenario</button>
+            </div>
+          </div>
+
+          <details class="antakelser">
+            <summary>Hva simuleringen bygger på</summary>
+            <ul>
+              <li>Soltall per måned for Kragerø fra solkart.no (sør, 30° helning). Mars og oktober mangler i kilden og er anslått som snitt av nabomånedene. Dagslengden er regnet astronomisk for 58,9° nord. Dagens energi er fordelt som en klokkekurve over dagslyset.</li>
+              <li>«Sol» gir 25 % mer enn månedssnittet, «delvis skyet» omtrent snittet med skyer som kommer og går, «overskyet» ca. 30 % av snittet. Skyene er tilfeldige, men like hver gang du kjører samme scenario.</li>
+              <li>Forbruket følger lastlisten i regnearket: 115 W standby hele døgnet (Starlink, ruter, styring, vekselretter), kjøleskap, lys om kvelden, ladere, vannpumpe i korte støt og 15 minutter vedkløyver og verktøy per dag med folk. Med seks personer blir det 4,8 kWh per døgn.</li>
+              <li>Batteri 8,4 kWh, lades med maks 2,5 kW. Vekselretteren taper 10 %. Under 10 % slår batteristyringen av strømmen for å beskytte batteriet.</li>
+              <li>Generatoren lader med ca. 2,5 kW og bruker ca. 1,1 liter diesel i timen (2,5 kWh per liter).</li>
+              <li>Temperaturen er en grov årskurve for Kragerø med døgnsvingning, bare brukt til å avgjøre forvarming.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Trygghet og sikkerhet -->
+    <section id="trygghet" class="seksjon alt" aria-labelledby="trygghet-tittel">
+      <div class="wrap">
+        <p class="overline">Sikkerhet</p>
+        <h2 id="trygghet-tittel">Trygghet og sikkerhet</h2>
+        <p class="lead">Grunnregelen er enkel: hvis noe ryker, stopper generatoren. Alle sikkerhetssignalene er koblet slik at en brutt ledning, en død styringsboks eller strømløs styring betyr «stopp», aldri «kjør». Generatoren får bare startsignal så lenge styringen aktivt holder det.</p>
+        <div class="kortgrid">
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis styringen mister strømmen?</h3>
+            <p>Startsignalet til generatoren faller bort, og generatoren stopper. Ikke-vitale laster kobles også fra. Ingenting kan starte av seg selv før styringen er tilbake.</p>
+            <p class="liten">Dette følger av koblingen, ikke av programmet. Det er derfor det er trygt.</p>
+          </article>
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis CO-varsleren slår ut?</h3>
+            <p>Generatoren stoppes med en gang, og den kan ikke starte igjen før varsleren er nullstilt. Alarm sendes til telefonen.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="co">Se det i simuleringen</a>
+          </article>
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis generatoren ikke starter?</h3>
+            <p>Etter 90 sekunder uten svar sender styringen alarm til telefonen. Batteriet forsyner hytta videre, og under 15 % kobles unødvendige laster fra så lys og overvåking varer lengst mulig.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="starterikke">Se det i simuleringen</a>
+          </article>
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis det er lite diesel?</h3>
+            <p>Tanken har en nivåvakt. Ved lavt nivå sperres generatoren og det sendes alarm, så den aldri kjører tanken tom og suger luft.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="desember">Se vinterdrift i simuleringen</a>
+          </article>
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis ingen er på hytta?</h3>
+            <p>Anlegget går som før. Generatoren starter når batteriet blir lavt, stopper når det er fullt, og kjører en kort test hver måned. Alt du trenger å gjøre, er å se på telefonen innimellom.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="desember">Se det i simuleringen</a>
+          </article>
+          <article class="kort hva-hvis">
+            <h3>Hva skjer hvis noen trykker på nødstoppen?</h3>
+            <p>Alt stopper umiddelbart, og alarm sendes. Nødstoppen må tilbakestilles på stedet før generatoren kan starte igjen.</p>
+            <a class="knapp lenke" href="#simulering" data-scenario="nodstopp">Se det i simuleringen</a>
+          </article>
+        </div>
+        <h3>Flere innebygde grenser</h3>
+        <ul class="punkter">
+          <li><strong>Aldri mer enn 6 timer i strekk.</strong> Generatoren stoppes uansett etter 6 timer, og den må hvile 10 minutter før den kan starte igjen.</li>
+          <li><strong>Forvarming i kulda.</strong> Under 5 °C varmes generatoren i 20 minutter før start, så den slipper å kaldstarte.</li>
+          <li><strong>Går den av seg selv?</strong> Hvis generatoren går uten at styringen har bedt om det, sendes alarm etter 30 sekunder.</li>
+          <li><strong>Batteristyringen må si OK.</strong> Melder batteriet feil, går alarmen.</li>
+          <li><strong>Auto/manuell-bryter.</strong> Står bryteren i skuret på manuell, kan ingenting starte automatisk. Praktisk ved vedlikehold.</li>
+          <li><strong>Ærlig om det som gjenstår.</strong> Automatisk start uten tilsyn skal godkjennes av forsikringsselskapet, og skuret trenger ventilasjon, lyddemping og brann- og CO-sikring. Se «Gjennomtenkt».</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Fjernovervåking -->
+    <section id="overvaking" class="seksjon" aria-labelledby="overvaking-tittel">
+      <div class="wrap slik-grid">
+        <div>
+          <p class="overline">Hjemmefra</p>
+          <h2 id="overvaking-tittel">Fjernovervåking</h2>
+          <p class="lead">Starlink står på hele tiden. En liten server på hytta sender status til telefonen og varsler når noe trenger oppmerksomhet.</p>
+          <ul class="punkter">
+            <li><strong>Status når du vil:</strong> batterinivå, sol, forbruk, om generatoren går og temperaturen i skuret.</li>
+            <li><strong>Varsel når det trengs:</strong> generatoren starter ikke, CO-alarm, nødstopp, lite diesel, svært lavt batteri eller mistet kontakt.</li>
+            <li><strong>Livstegn:</strong> styringen og serveren passer på hverandre. Uteblir livstegnet i 60 sekunder, går alarmen.</li>
+            <li><strong>Sikkert:</strong> styringsboksens egen nettside er ikke åpen mot internett. Forbindelsen hjem går gjennom en kryptert tunnel som bare hytta og telefonen har nøkkel til.</li>
+          </ul>
+          <p class="liten">Varslene i simuleringen er eksempler på hvordan dette kan se ut. Hvilken app som brukes, er ikke bestemt.</p>
+        </div>
+        <div id="telefon-demo" class="telefon telefon-demo"></div>
+      </div>
+    </section>
+
+    <!-- 7. Hele året -->
+    <section id="aaret" class="seksjon alt" aria-labelledby="aaret-tittel">
+      <div class="wrap">
+        <p class="overline">Energibalanse</p>
+        <h2 id="aaret-tittel">Hele året</h2>
+        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og Starlink på hele vinteren.</p>
+        <div id="aarsdiagram" class="aarsdiagram"></div>
+        <p class="liten" id="aarsnotat"></p>
+        <h3>Vinteren: Starlink på hele tiden koster diesel</h3>
+        <p>Når hytta står tom, bruker Starlink, ruteren, styringen og vekselretteren til sammen ca. 115 W døgnet rundt. Fra november til februar er det for lite sol til å dekke det, så generatoren må gjøre jobben. Alternativene under bruker mye mindre og går nesten i null med sola. Dette er et ærlig valg vi kan ta sammen.</p>
+        <div id="vintertabell"></div>
+        <p class="liten" id="vinternotat"></p>
+      </div>
+    </section>
+
+    <!-- 8. Gjennomtenkt -->
+    <section id="gjennomtenkt" class="seksjon" aria-labelledby="gjennomtenkt-tittel">
+      <div class="wrap">
+        <p class="overline">Status</p>
+        <h2 id="gjennomtenkt-tittel">Gjennomtenkt</h2>
+        <div class="to-kolonner">
+          <div class="kort">
+            <h3>Dette er gjort</h3>
+            <ul class="sjekk">
+              <li>Forbruk, batteri, vekselretter og solceller er dimensjonert i et regneark med alle antakelser synlige.</li>
+              <li>Reglene for styringen er skrevet ned punkt for punkt: start, stopp, forvarming, hvile, lastfrakobling, alarmer og testkjøring.</li>
+              <li>Reglene er testet i en simulering med elleve scenarioer, og det er den samme logikken som kjører på denne siden.</li>
+              <li>Alle inn- og utganger på styringen er planlagt, med sikkerhetssignalene koblet slik at brudd gir stopp.</li>
+              <li>Nettverket på hytta og forbindelsen hjem er planlagt.</li>
+            </ul>
+          </div>
+          <div class="kort">
+            <h3>Dette er neste steg</h3>
+            <ul class="neste">
+              <li>Velge generator med ferdig montert autostart-kort. Dieseldrevet, lyddempet kappe, elstart, gjerne vannkjølt 1500-omdreiningstype for mindre støy og lengre levetid.</li>
+              <li>Velge batterimonitor og bekrefte noen tekniske detaljer på styringen mot håndboken.</li>
+              <li>Elektriker til skuret, kabling på 30 m, jording og overspenningsvern.</li>
+              <li>Skur med ventilasjon, lyddemping, brann- og CO-sikring.</li>
+              <li>Avklare med forsikringsselskapet at automatisk start uten tilsyn er i orden.</li>
+              <li>Bygge programmet, teste det i simulering, og så sette i gang modul for modul.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Ordliste + FAQ -->
+    <section id="ordliste" class="seksjon alt" aria-labelledby="ordliste-tittel">
+      <div class="wrap to-kolonner">
+        <div>
+          <h2 id="ordliste-tittel">Ordliste</h2>
+          <dl class="ordliste">
+            <dt>kWh (kilowattime)</dt><dd>En mengde strøm. 1 kWh er det en panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta i ti timer, eller lader en mobil rundt 60 ganger.</dd>
+            <dt>kW (kilowatt)</dt><dd>Effekt, altså hvor mye strøm som brukes eller lages akkurat nå. En vannkoker bruker ca. 2 kW. Vedkløyveren bruker 2,2 kW og trenger tre ganger så mye idet den starter.</dd>
+            <dt>kWp</dt><dd>Solcellenes merkeeffekt i full sol. 2 kWp er omtrent fem store paneler.</dd>
+            <dt>Batterinivå</dt><dd>Hvor fullt batteriet er, i prosent. Styringen bruker faste grenser: 15, 30, 40 og 90 %.</dd>
+            <dt>Vekselretter</dt><dd>Lager vanlig 230 V strøm av batteriets likestrøm.</dd>
+            <dt>Laderegulator</dt><dd>Sørger for at solcellene lader batteriet riktig.</dd>
+            <dt>Batteristyring (BMS)</dt><dd>Elektronikken inne i batteriet som passer på at det ikke overlades, tømmes helt eller blir for varmt.</dd>
+            <dt>Styringen</dt><dd>En liten industriell styringsboks som leser signaler og styrer generatoren etter faste regler.</dd>
+            <dt>Autostart-kort</dt><dd>Generatorens egen kontroller. Styringen sier bare «kjør», og kortet gjør resten: starter motoren, melder «går» eller «feil».</dd>
+            <dt>Standby</dt><dd>Det hytta bruker når ingen er der: Starlink, ruter, styring og vekselretter, ca. 115 W til sammen.</dd>
+            <dt>Ikke-vitale laster</dt><dd>Vannpumpe, ladere og verktøy. Disse kobles fra hvis batteriet blir svært lavt, så lys, kjøleskap og overvåking varer lengst mulig.</dd>
+            <dt>Fail-safe</dt><dd>Koblet slik at en feil (brudd, strømløs styring) gir «stopp», aldri «kjør».</dd>
+          </dl>
+        </div>
+        <div>
+          <h2>Spørsmål og svar</h2>
+          <details><summary>Hvor mye støy blir det fra generatoren?</summary><p>Den står i eget skur ca. 30 m fra hytta, med lyddempet kappe. Modellen er ikke valgt, så støynivået er ikke kjent ennå. Om sommeren er det beregnet at den nesten aldri trenger å gå.</p></details>
+          <details><summary>Hvor ofte går generatoren?</summary><p>Fra april til september er det beregnet at sola dekker forbruket, så generatoren står stort sett stille. Om vinteren, med Starlink på hele tiden, går den noen timer annenhver eller tredje hver dag. Prøv scenarioet «Ingen på hytta i desember».</p></details>
+          <details><summary>Hva om noe ryker mens ingen er der?</summary><p>Alle feil gir stopp, ikke start. Du får alarm på telefonen, og hytta går videre på batteri og sol så lenge det rekker. I verste fall slår batteristyringen av strømmen for å beskytte batteriet, og alt må startes opp igjen manuelt. Da må noen reise ut.</p></details>
+          <details><summary>Kan vi bygge ut senere?</summary><p>Ja. Flere solceller eller et større batteri er bare å koble til. Styringen har ledige inn- og utganger.</p></details>
+          <details><summary>Hvor sikre er tallene?</summary><p>Alle tall er beregnet ut fra antakelser om forbruk og soldata for Kragerø. De er merket som beregnet eller anslått på siden. Virkelig forbruk og vær vil avvike, og det er derfor anlegget er dimensjonert med 25 % margin og med en generator som tar resten.</p></details>
+          <details><summary>Må vi ha Starlink på hele vinteren?</summary><p>Nei. Det er et valg. Se avsnittet «Hele året» for alternativene og hvor mye diesel de sparer.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bunn">
+    <div class="wrap">
+      <p>Laget av Sebastian.</p>
+      <p class="liten">Alle tall er beregnede estimater fra regnearket og overleveringsdokumentet, ikke målinger. Siden bruker ingen sporing, ingen informasjonskapsler og henter ingenting fra andre tjenester.</p>
+    </div>
+  </footer>
+
+  <div id="tour" class="tour" hidden></div>
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

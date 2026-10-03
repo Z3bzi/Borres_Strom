@@ -94,20 +94,26 @@ button { font: inherit; }
 .tall strong { display: block; font-size: 1.5rem; letter-spacing: -0.01em; }
 .tall span { display: block; font-size: 0.88rem; color: var(--ink-2); }
 
-/* Sammenligning */
-.sammenligning { display: grid; gap: 10px; margin: 20px 0; }
-.sammenligning .rad { display: grid; grid-template-columns: 1fr; gap: 6px; background: var(--kort); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--skygge); }
-.sammenligning .rad [role="rowheader"] { font-weight: 650; }
-.sammenligning .rad [role="cell"]::before { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); display: block; }
-.sammenligning .rad [role="cell"]:nth-child(2)::before { content: "I dag"; }
-.sammenligning .rad [role="cell"]:nth-child(3)::before { content: "Med nytt anlegg"; color: var(--batteri); }
-.sammenligning .rad.hode { display: none; }
-@media (min-width: 760px) {
-  .sammenligning .rad { grid-template-columns: 1fr 1.4fr 1.6fr; gap: 20px; }
-  .sammenligning .rad [role="cell"]::before { display: none; }
-  .sammenligning .rad.hode { display: grid; background: transparent; box-shadow: none; padding: 0 16px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); font-weight: 650; }
-}
-.sammenligning .ny { border-left: 3px solid var(--batteri); padding-left: 10px; }
+/* Utstyr og tabeller */
+.utstyr { display: grid; gap: 12px; margin: 20px 0 32px; }
+@media (min-width: 700px) { .utstyr { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .utstyr { grid-template-columns: repeat(3, 1fr); } }
+.komp { background: var(--kort); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--skygge); }
+.komp header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.komp h3 { margin: 0; }
+.komp p { margin: 0; font-size: 0.95rem; color: var(--ink-2); }
+.merkelapp { flex: none; font-size: 0.75rem; font-weight: 650; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.merkelapp.valgt { background: var(--batteri-lys); color: #1f6b44; }
+.merkelapp.planlagt { background: var(--bg-alt); color: var(--ink-2); }
+h3.under { margin-top: 8px; }
+.tabell-rull { overflow-x: auto; margin: 12px 0; }
+table.tabell { width: 100%; border-collapse: collapse; background: var(--kort); border-radius: var(--radius); overflow: hidden; box-shadow: var(--skygge); font-size: 0.95rem; }
+table.tabell th, table.tabell td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--linje); vertical-align: top; }
+table.tabell th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
+table.tabell td:first-child { font-weight: 650; white-space: nowrap; }
+@media (max-width: 560px) { table.tabell { font-size: 0.88rem; } table.tabell th, table.tabell td { padding: 8px; } }
+.neste-liste { display: grid; gap: 8px; padding-left: 1.3em; margin: 0; }
+.apne { margin-top: 20px; }
 
 /* Slik fungerer det */
 .slik-grid { display: grid; gap: 28px; align-items: start; }

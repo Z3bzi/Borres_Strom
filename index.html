@@ -15,31 +15,31 @@
     <nav class="mininav" aria-label="Innhold">
       <a href="#topp" class="brand">Børresholmen</a>
       <ul>
-        <li><a href="#idag">I dag og med nytt anlegg</a></li>
-        <li><a href="#slik">Slik fungerer det</a></li>
-        <li><a href="#simulering">Simuleringen</a></li>
-        <li><a href="#trygghet">Trygghet</a></li>
-        <li><a href="#overvaking">Fjernovervåking</a></li>
-        <li><a href="#aaret">Hele året</a></li>
-        <li><a href="#gjennomtenkt">Gjennomtenkt</a></li>
+        <li><a href="#slik">Oppbygging</a></li>
+        <li><a href="#utstyr">Utstyr</a></li>
+        <li><a href="#logikk">Styringslogikk</a></li>
+        <li><a href="#simulering">Simulering</a></li>
+        <li><a href="#trygghet">Sikkerhet</a></li>
+        <li><a href="#overvaking">Overvåking</a></li>
+        <li><a href="#aaret">Energibalanse</a></li>
+        <li><a href="#status">Status</a></li>
         <li><a href="#ordliste">Ordliste og spørsmål</a></li>
       </ul>
     </nav>
   </header>
 
   <main id="topp">
-    <!-- 1. Intro -->
     <section class="hero" aria-labelledby="hero-tittel">
       <div class="wrap hero-grid">
         <div class="hero-tekst">
-          <p class="overline">Forslag til nytt strømanlegg på hytta</p>
+          <p class="overline">Forslag: nytt off-grid anlegg med generator-autostart</p>
           <h1 id="hero-tittel">Strøm på hytta som bare fungerer, også når ingen er der.</h1>
-          <p class="lead">Solceller, et batteri og en dieselgenerator i eget skur som starter av seg selv når batteriet blir lavt. Alt styres automatisk, og du kan se at alt er i orden fra telefonen hjemme.</p>
+          <p class="lead">2 kWp solceller, et litiumbatteri på ca. 8,4 kWh, en kombinert vekselretter og lader, og et dieselaggregat på 5–6 kVA i eget skur 30 m unna. En Siemens LOGO! 9 starter og stopper aggregatet etter batterinivå, forvarmer i kulde, kobler fra ikke-vitale laster og varsler over 5G.</p>
           <div class="cta">
             <a class="knapp primær" href="#simulering">Prøv simuleringen</a>
-            <a class="knapp sekundær" href="#slik">Les hvordan det fungerer</a>
+            <a class="knapp sekundær" href="#utstyr">Se utstyret</a>
           </div>
-          <p class="liten">Alle tall på siden er beregnet, ikke målt. De kommer fra Sebastians regneark og kan endre seg når utstyret velges.</p>
+          <p class="liten">Alle tall er beregnet fra regnearket og overleveringen, ikke målt. Utstyr som ikke er valgt ennå, er merket.</p>
         </div>
         <figure class="hero-ill" aria-label="Tegning av hytta på holmen med solceller, sjø, sol og generatorskur 30 meter unna">
           <svg viewBox="0 0 640 400" role="img" aria-hidden="true" class="ill-hytte">
@@ -103,66 +103,128 @@
               <polygon points="580,250 592,220 604,250" />
             </g>
           </svg>
-          <figcaption class="liten">Skisse. [TODO Sebastian: bilde av hytta og dagens anlegg kan erstatte eller stå ved siden av denne]</figcaption>
         </figure>
       </div>
       <div class="wrap nokkeltall" aria-label="Nøkkeltall, beregnet">
-        <div class="tall"><strong>3,2&nbsp;<button type="button" class="term" data-tip="Kilowattime, en mengde strøm. 1 kWh er det en liten panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta tent i ti timer, eller lader en mobil rundt 60 ganger.">kWh</button></strong><span>forbruk per døgn med folk på hytta</span></div>
-        <div class="tall"><strong>8,4&nbsp;kWh</strong><span>batteri, nok til ca. halvannet døgn uten sol</span></div>
-        <div class="tall"><strong>2&nbsp;<button type="button" class="term" data-tip="Kilowatt-peak: solcellenes merkeeffekt, altså hvor mye de gir i full sol. 2 kWp er omtrent fem store paneler.">kWp</button></strong><span>solceller, dekker alt fra april til september</span></div>
-        <div class="tall"><strong>Automatisk</strong><span>generatorstart, forvarming og varsling</span></div>
+        <div class="tall"><strong>3,2&nbsp;kWh</strong><span>forbruk per døgn med 6 personer</span></div>
+        <div class="tall"><strong>8,4&nbsp;kWh</strong><span>batteri, 6,7 kWh brukbart</span></div>
+        <div class="tall"><strong>2&nbsp;kWp</strong><span>solceller, sør, 30° helning</span></div>
+        <div class="tall"><strong>48&nbsp;W</strong><span>standby: 5G-ruter, PLS og Pi, vekselretter</span></div>
       </div>
     </section>
 
-    <!-- 2. I dag og med nytt anlegg -->
-    <section id="idag" class="seksjon" aria-labelledby="idag-tittel">
-      <div class="wrap">
-        <p class="overline">Hvorfor</p>
-        <h2 id="idag-tittel">I dag og med nytt anlegg</h2>
-        <p class="lead">I dag har hytta et lite solcelleanlegg som holder til lading og lys, en løs generator til de tunge tingene, og vann som pumpes for hånd opp på loftstanken. Det fungerer, men det krever at noen er der og passer på.</p>
-        <p class="liten">[TODO Sebastian: panelstørrelse, batteritype og -størrelse på dagens anlegg]</p>
-        <div class="sammenligning" role="table" aria-label="Sammenligning av dagens anlegg og nytt anlegg">
-          <div class="rad hode" role="row"><span role="columnheader">Hverdagen</span><span role="columnheader">I dag</span><span role="columnheader">Med nytt anlegg</span></div>
-          <div class="rad" role="row"><span role="rowheader">Lading og lys</span><span role="cell">Går, så lenge det har vært sol.</span><span role="cell" class="ny">Går alltid. Blir batteriet lavt, starter generatoren selv.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Kjøleskap</span><span role="cell">[TODO Sebastian: har hytta kjøleskap i dag, og går det?]</span><span role="cell" class="ny">Står på hele tiden, også om natta og i grått vær.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Vann</span><span role="cell">Håndpumpe fra brønnen opp til loftstanken.</span><span role="cell" class="ny">Elektrisk pumpe. Fylles automatisk.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Verktøy og vedkløyver</span><span role="cell">Løs generator som må startes manuelt, og som er for svak til vedkløyveren.</span><span role="cell" class="ny">Vekselretteren tåler motorstart på vedkløyveren (beregnet toppeffekt ca. 9,3 kW). Går rett fra batteriet.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Internett</span><span role="cell">Ingen.</span><span role="cell" class="ny">5G-ruter på hele tiden, til folk og til overvåking.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Grå helg i september</span><span role="cell">Strømmen tar slutt når batteriet er tomt.</span><span role="cell" class="ny">Generatoren starter av seg selv, lader batteriet og stopper igjen. Prøv scenarioet «Overskyet helg i september».</span></div>
-          <div class="rad" role="row"><span role="rowheader">Når du kommer</span><span role="cell">Usikkert hvor mye strøm det er.</span><span role="cell" class="ny">Batteriet er holdt oppe mens hytta sto tom.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Når ingen er der</span><span role="cell">Ingen vet hvordan det står til.</span><span role="cell" class="ny">Status og alarmer på telefonen, hjemmefra.</span></div>
-        </div>
-        <p class="liten">Sammenligningen er kvalitativ. Hva det nye anlegget faktisk klarer, er beregnet, ikke målt, og vises i simuleringen lenger ned.</p>
-      </div>
-    </section>
-
-    <!-- 3. Slik fungerer det -->
+    <!-- Oppbygging -->
     <section id="slik" class="seksjon alt" aria-labelledby="slik-tittel">
       <div class="wrap">
-        <p class="overline">Oversikt</p>
-        <h2 id="slik-tittel">Slik fungerer det</h2>
+        <p class="overline">Oppbygging</p>
+        <h2 id="slik-tittel">Slik henger det sammen</h2>
         <div class="slik-grid">
           <figure class="flow-figur">
             <div id="flow-demo" class="flow"></div>
             <figcaption id="flow-demo-tekst" class="flow-tekst" aria-live="polite"></figcaption>
           </figure>
           <ol class="steg">
-            <li><strong>Sola lader batteriet.</strong> Solcellene på taket (planlagt ca. 2 kWp) lader batteriet gjennom en <button type="button" class="term" data-tip="En boks mellom solcellene og batteriet som sørger for at batteriet lades riktig og ikke overlades.">laderegulator</button>. Fra april til september er det beregnet at sola dekker alt forbruket.</li>
-            <li><strong>Batteriet forsyner hytta.</strong> Et batteri på ca. 8,4 kWh holder i ca. halvannet døgn med folk på hytta, beregnet med 25 % margin. En <button type="button" class="term" data-tip="Lager vanlig 230 V strøm av batteriets likestrøm, så alt vanlig utstyr kan brukes.">vekselretter</button> gjør batteristrømmen om til vanlig 230 V.</li>
-            <li><strong>Generatoren tar over når sola ikke strekker til.</strong> Er batteriet under 30 % i fem minutter, starter styringen dieselgeneratoren i skuret ca. 30 m unna. Den lader med ca. 2,5 kW og stopper når batteriet er over 90 %.</li>
-            <li><strong>Styringen passer på.</strong> En liten, robust <button type="button" class="term" data-tip="En liten industriell styringsboks som leser av batterinivå, temperatur og sikkerhetssignaler, og som styrer generatoren etter faste regler. Samme type brukes i f.eks. ventilasjonsanlegg og pumpestasjoner.">styringsboks</button> leser batterinivå og temperatur, forvarmer generatoren når det er kaldt, kobler fra unødvendige laster hvis batteriet blir svært lavt, og sender alarm hvis noe er galt.</li>
-            <li><strong>Du ser alt hjemmefra.</strong> En <button type="button" class="term" data-tip="En ruter med SIM-kort som gir internett over mobilnettet, på samme måte som en mobiltelefon. Den gir også Wi-Fi på hytta.">5G-ruter</button> står på hele tiden, så batterinivå, generatorstatus og alarmer kommer til telefonen.</li>
+            <li><strong>Sol til batteri.</strong> Panelene lader batteriet gjennom en <button type="button" class="term" data-tip="Maximum Power Point Tracking: laderegulatoren finner hele tiden spenningen der panelene gir mest effekt.">MPPT</button>-regulator. Med 2 kWp dekker sola et snittdøgn fra april til september; regnearket sier at ca. 1,5 kWp holder for et snittdøgn i september.</li>
+            <li><strong>Batteri til hytta.</strong> Batteriet forsyner en kombinert vekselretter og lader, dimensjonert for 3,3 kW kontinuerlig og ca. 9,3 kW topp. Toppen dekker motorstart på vedkløyveren (2,2 kW × 3) oppå de faste lastene, med 25 % margin.</li>
+            <li><strong>Aggregat til batteri.</strong> Aggregatet står i skuret og mater AC-inngangen på laderen gjennom 3G6 over 30 m. Laderen gir ca. 2,5 kW DC inn på batteriet, altså 0,3 C. Aggregatet har sitt eget autostart-kort; PLS-en sender bare «kjør» og leser «kjører» og «feil» tilbake.</li>
+            <li><strong>PLS-en bestemmer.</strong> LOGO! 9 leser batterinivået fra batterimonitoren over Modbus TCP, og temperatur i skuret. Den eier start, stopp, forvarming, lastfrakobling og alarmer, uavhengig av alt annet.</li>
+            <li><strong>Pi og 5G-ruter varsler.</strong> En Raspberry Pi sender status og alarmer hjem over en 5G-ruter, og gir PLS-en et jevnlig livstegn. Faller Pi-en ut, fortsetter PLS-en som før og melder datafeil lokalt.</li>
           </ol>
         </div>
       </div>
     </section>
 
-    <!-- 4. Simuleringen -->
+    <!-- Utstyr -->
+    <section id="utstyr" class="seksjon" aria-labelledby="utstyr-tittel">
+      <div class="wrap">
+        <p class="overline">Utstyr</p>
+        <h2 id="utstyr-tittel">Komponenter, krav og status</h2>
+        <p class="lead">Kravene kommer fra dimensjoneringen i regnearket. Bare styringen er valgt; for resten står kravene og eventuelle kandidater.</p>
+        <div class="utstyr">
+          <article class="komp"><header><h3>Solceller</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Ca. 2 kWp, for eksempel 5 × 430 W, sør, 30° helning. Beregnet 9,6 kWh per døgn i juni og 6,1 kWh i september etter 10 % systemtap. Overleveringen anbefaler 3 kWp (7 × 430 W) for mer margin på grå dager.</p></article>
+          <article class="komp"><header><h3>MPPT-laderegulator</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Dimensjoneres etter panelstrenger og systemspenning når batteri og vekselretter er valgt.</p></article>
+          <article class="komp"><header><h3>Batteri</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Ca. 8,4 kWh nominelt, LiFePO4 antatt med 80 % brukbart (6,7 kWh). Maks lading 0,3 C, ca. 2,5 kW. Dimensjonert for ett døgns autonomi med Starlink. Med 5G-ruter gir samme formel ca. 5,6 kWh, så 8,4 kWh holder ca. 1,5 døgn og dekker ca. 75 % av en helg helt uten sol.</p></article>
+          <article class="komp"><header><h3>Vekselretter og lader</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Minst 3,3 kW kontinuerlig og ca. 9,3 kW topp. AC-inngang for aggregatet, lading ca. 2,5 kW DC. Tomgang ca. 25 W er antatt og må sjekkes i databladet.</p></article>
+          <article class="komp"><header><h3>Batterimonitor</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Shunt, BMS, vekselretter eller Cerbo GX som leverer batterinivå (SOC) til PLS-en over Modbus TCP. Kan den bare Modbus RTU, brukes en RS485-til-TCP-omformer.</p></article>
+          <article class="komp"><header><h3>Dieselaggregat</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Enfase, 5–6 kVA, elstart, lukket lyddempet kappe. Helst 1500 o/min vannkjølt framfor 3000 o/min luftkjølt: roligere og lengre levetid, men tyngre. Minstekrav fra regnearket er 3,3 kW kontinuerlig. Forbruk antatt 2,5 kWh per liter.</p></article>
+          <article class="komp"><header><h3>Autostart-kort</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Helst fabrikkmontert og ferdig koblet på aggregatet (DSE, Datakom eller ComAp), så sensorer og kort passer sammen. Må ha tørr remote start-inngang og potensialfrie utganger for «kjører» og «alarm». Obs: «AMF» betyr ofte nettvakt, og «ATS-ready» betyr ofte bare to klemmer for startsignal. Kandidat ved egen bygging: DSE7310 MKII (8–35 V DC, RS485 Modbus RTU, ingen Ethernet).</p></article>
+          <article class="komp"><header><h3>PLS</h3><span class="merkelapp valgt">Valgt</span></header>
+            <p>Siemens LOGO! 9, 12/24RCE (6ED1052-1MD08-0BA3): 8 digitale innganger og 4 reléutganger, programmert i FBD i LOGO!Soft Comfort V9. I/O-planen er lagt inn.</p></article>
+          <article class="komp"><header><h3>Raspberry Pi</h3><span class="merkelapp planlagt">Planlagt</span></header>
+            <p>Python, Mosquitto (MQTT) og Node-RED eller Home Assistant. Knutepunkt for status og varsler, og kilde til livstegnet PLS-en overvåker.</p></article>
+          <article class="komp"><header><h3>5G-ruter</h3><span class="merkelapp planlagt">Ikke valgt</span></header>
+            <p>Med Wi-Fi, ca. 15 W antatt. Erstatter Starlink (ca. 70 W) og egen ruter (12 W). Dekningen på holmen må måles; eventuelt utendørs antenne.</p></article>
+          <article class="komp"><header><h3>Kabling hytte–skur, 30 m</h3><span class="merkelapp planlagt">Elektriker</span></header>
+            <p>3G6 fra aggregatet til hytta. 3G2,5 hjelpestrøm 10 A med jordfeilbryter for forvarming og startbatterilader. 12-leder skjermet 0,75 mm² for styresignaler. Utendørs Cat6 med overspenningsvern, eller fiberomformer. Jording og overspenningsvern av elektriker.</p></article>
+          <article class="komp"><header><h3>Skur og sensorer</h3><span class="merkelapp planlagt">Planlagt</span></header>
+            <p>Ventilasjon, lyddemping, brann- og CO-sikring. CO/røykdetektor, nødstopp, nivåvakt på dieseltanken og auto/manuell-bryter, alle koblet til PLS-en.</p></article>
+        </div>
+
+        <h3 class="under">Inn- og utganger på PLS-en</h3>
+        <p>Alle sikkerhetssignaler er koblet som <button type="button" class="term" data-tip="Normally closed: kontakten er lukket når alt er OK. Et brudd i ledningen ser ut som en feil og gir stopp.">NC</button>, så brudd gir stopp. Reléutgangene tåler 10 A resistivt og 3 A induktivt, uten kortslutningsvern, så de får ekstern sikring og frihjulsdiode eller RC-ledd på induktive laster.</p>
+        <div class="tabell-rull">
+          <table class="tabell io">
+            <thead><tr><th>Kanal</th><th>Funksjon</th><th>Merknad</th></tr></thead>
+            <tbody>
+              <tr><td>I1</td><td>Aggregat kjører</td><td>Fra autostart-kortet</td></tr>
+              <tr><td>I2</td><td>Aggregat feil/lås</td><td>Fra autostart-kortet</td></tr>
+              <tr><td>I3</td><td>Vern/nødstopp OK</td><td>NC, bryter = stopp</td></tr>
+              <tr><td>I4</td><td>Auto/manuell</td><td>Auto kreves for start</td></tr>
+              <tr><td>I5</td><td>Drivstoff OK</td><td>NC</td></tr>
+              <tr><td>I6</td><td>CO/røyk OK</td><td>NC, sperrer start</td></tr>
+              <tr><td>I7</td><td>BMS OK</td><td>1 = OK, 0 = feil</td></tr>
+              <tr><td>I8</td><td>Ledig</td><td>Reserve, f.eks. kablet «batteri lavt»</td></tr>
+              <tr><td>Q1</td><td>Aggregat kjør</td><td>Normalt åpen, spenningsløs = stopp</td></tr>
+              <tr><td>Q2</td><td>Lastfrakobling</td><td>Aktiv = ikke-vitale laster tillatt</td></tr>
+              <tr><td>Q3</td><td>Hjelpestrøm skur</td><td>Forvarming og lader</td></tr>
+              <tr><td>Q4</td><td>Alarm</td><td>Pulserende</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="liten">I tillegg leses batterinivå og temperatur over nettverket, og livstegnet fra Pi-en kommer på en nettverksinngang.</p>
+      </div>
+    </section>
+
+    <!-- Styringslogikk -->
+    <section id="logikk" class="seksjon alt" aria-labelledby="logikk-tittel">
+      <div class="wrap">
+        <p class="overline">Styringslogikk</p>
+        <h2 id="logikk-tittel">Reglene i PLS-en, modul 1–10</h2>
+        <p class="lead">Terskler og tider er startverdier som justeres ved igangkjøring. Kjør-signalet Q1 er en reset-dominant lås: stopp vinner alltid over start.</p>
+        <div class="tabell-rull">
+          <table class="tabell logikk">
+            <thead><tr><th>Modul</th><th>Regel</th></tr></thead>
+            <tbody>
+              <tr><td>1 Klar</td><td>KLAR = nødstopp OK og CO/røyk OK og drivstoff OK og ingen aggregatfeil og bryter i auto.</td></tr>
+              <tr><td>2 Batterinivå</td><td>Lavt under 30 %, normalt igjen over 90 % (hysterese). Lavt i 5 min gir startønske.</td></tr>
+              <tr><td>3 Forvarming</td><td>Under 5 °C (hysterese 5/8 °C) slås hjelpestrøm i skuret (Q3) på ved startønske, og start kommer først etter 20 min. Q3 står også på mens aggregatet går.</td></tr>
+              <tr><td>4 Kjør (Q1)</td><td>Settes ved startønske (etter eventuell forvarming), KLAR og ikke hvile. Nullstilles ved stopp eller når KLAR faller.</td></tr>
+              <tr><td>5 Stopp</td><td>Over 90 % og aggregatet har gått minst 30 min, eller maks gangtid 6 t.</td></tr>
+              <tr><td>6 Hvile</td><td>10 min etter stopp før ny start er tillatt.</td></tr>
+              <tr><td>7 Alarmer</td><td>Startfeil: kjør uten «kjører» i 90 s. Ukommandert: «kjører» uten kjør i 30 s. I tillegg aggregatfeil, nødstopp, CO/røyk, drivstoff, BMS og datafeil. Lagres til kvittering.</td></tr>
+              <tr><td>8 Lastfrakobling</td><td>Under 15 % kobles ikke-vitale laster fra, over 40 % inn igjen. Alltid inne mens aggregatet går.</td></tr>
+              <tr><td>9 Datavakt</td><td>Uteblir livstegnet fra Pi-en i 60 s, gir det datafeil.</td></tr>
+              <tr><td>10 Testkjøring</td><td>Én gang i måneden 30 min, bare når batteriet er under 70 % og KLAR.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="liten">Simuleringen evaluerer reglene én gang i sekundet; den ekte PLS-en skanner mye oftere. Autostart-kortet svarer på kjør-signalet med ett skanns forsinkelse, og det er tatt med i simuleringen.</p>
+      </div>
+    </section>
+
+    <!-- Simuleringen -->
     <section id="simulering" class="seksjon sim" aria-labelledby="sim-tittel">
       <div class="wrap">
         <p class="overline">Prøv selv</p>
         <h2 id="sim-tittel">Simuleringen</h2>
-        <p class="lead">Her kan du leve et døgn eller en uke på hytta og se hvordan anlegget håndterer sol, skyer, folk, tom hytte, kulde og feil. Styringen i simuleringen følger nøyaktig de samme reglene som skal programmeres inn i den virkelige styringsboksen.</p>
+        <p class="lead">Et døgn eller en uke på hytta, sekund for sekund. Styringen her er en direkte port av referansesimuleringen av FBD-logikken (modul 1–10), og de 11 testscenarioene derfra kjører som automatiske tester mot denne koden. Energimodellen bygger på regnearket: soldata for Kragerø, lastlisten og batteri- og generatortallene.</p>
         <div id="sim-app" class="sim-app">
           <div class="sim-scenarioer" id="sim-scenarioer">
             <h3>Velg et scenario</h3>
@@ -336,150 +398,164 @@
       </div>
     </section>
 
-    <!-- 5. Trygghet og sikkerhet -->
+    <!-- Sikkerhet -->
     <section id="trygghet" class="seksjon alt" aria-labelledby="trygghet-tittel">
       <div class="wrap">
         <p class="overline">Sikkerhet</p>
-        <h2 id="trygghet-tittel">Trygghet og sikkerhet</h2>
-        <p class="lead">Grunnregelen er enkel: hvis noe ryker, stopper generatoren. Alle sikkerhetssignalene er koblet slik at en brutt ledning, en død styringsboks eller strømløs styring betyr «stopp», aldri «kjør». Generatoren får bare startsignal så lenge styringen aktivt holder det.</p>
+        <h2 id="trygghet-tittel">Fail-safe og feilhåndtering</h2>
+        <p class="lead">Q1 er et normalt åpent relé, og alle sikkerhetsinnganger er NC. En død PLS, tapt forsyning eller brudd i en ledning gir derfor stopp, ikke start. Det følger av koblingen, ikke av programmet.</p>
         <div class="kortgrid">
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis styringen mister strømmen?</h3>
-            <p>Startsignalet til generatoren faller bort, og generatoren stopper. Ikke-vitale laster kobles også fra. Ingenting kan starte av seg selv før styringen er tilbake.</p>
-            <p class="liten">Dette følger av koblingen, ikke av programmet. Det er derfor det er trygt.</p>
+            <h3>PLS-en mister forsyning</h3>
+            <p>Q1 faller og aggregatet stopper. Q2 faller, så ikke-vitale laster kobles fra. Ingenting kan starte før PLS-en er tilbake.</p>
           </article>
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis CO-varsleren slår ut?</h3>
-            <p>Generatoren stoppes med en gang, og den kan ikke starte igjen før varsleren er nullstilt. Alarm sendes til telefonen.</p>
+            <h3>CO/røyk i skuret</h3>
+            <p>I6 faller, KLAR faller, og Q1 nullstilles i samme skann. Start er sperret til detektoren er OK igjen. Alarm går.</p>
             <a class="knapp lenke" href="#simulering" data-scenario="co">Se det i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis generatoren ikke starter?</h3>
-            <p>Etter 90 sekunder uten svar sender styringen alarm til telefonen. Batteriet forsyner hytta videre, og under 15 % kobles unødvendige laster fra så lys og overvåking varer lengst mulig.</p>
+            <h3>Aggregatet starter ikke</h3>
+            <p>Kjør i 90 s uten «kjører» gir startfeil og alarm. Hytta går videre på batteriet; under 15 % kobles ikke-vitale laster fra.</p>
             <a class="knapp lenke" href="#simulering" data-scenario="starterikke">Se det i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis det er lite diesel?</h3>
-            <p>Tanken har en nivåvakt. Ved lavt nivå sperres generatoren og det sendes alarm, så den aldri kjører tanken tom og suger luft.</p>
+            <h3>Lite diesel</h3>
+            <p>Nivåvakten (I5) sperrer start og gir alarm, så aggregatet aldri kjører tanken tom og må luftes.</p>
             <a class="knapp lenke" href="#simulering" data-scenario="tom">Se en tom uke i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis ingen er på hytta?</h3>
-            <p>Anlegget går som før i sesongen (april til oktober). Generatoren starter når batteriet blir lavt, stopper når det er fullt, og kjører en kort test hver måned. Alt du trenger å gjøre, er å se på telefonen innimellom. Fra november til mars er hele anlegget avslått.</p>
+            <h3>Ingen på hytta</h3>
+            <p>Samme logikk som ellers, pluss månedlig testkjøring. Fra november til mars er hele anlegget avslått.</p>
             <a class="knapp lenke" href="#simulering" data-scenario="tom">Se det i simuleringen</a>
           </article>
           <article class="kort hva-hvis">
-            <h3>Hva skjer hvis noen trykker på nødstoppen?</h3>
-            <p>Alt stopper umiddelbart, og alarm sendes. Nødstoppen må tilbakestilles på stedet før generatoren kan starte igjen.</p>
+            <h3>Nødstopp</h3>
+            <p>I3 faller, Q1 nullstilles umiddelbart, og alarm går. Må tilbakestilles på stedet før ny start.</p>
             <a class="knapp lenke" href="#simulering" data-scenario="nodstopp">Se det i simuleringen</a>
           </article>
         </div>
-        <h3>Flere innebygde grenser</h3>
+        <h3>Funn fra simuleringen</h3>
         <ul class="punkter">
-          <li><strong>Aldri mer enn 6 timer i strekk.</strong> Generatoren stoppes uansett etter 6 timer, og den må hvile 10 minutter før den kan starte igjen.</li>
-          <li><strong>Forvarming i kulda.</strong> Under 5 °C varmes generatoren i 20 minutter før start, så den slipper å kaldstarte.</li>
-          <li><strong>Går den av seg selv?</strong> Hvis generatoren går uten at styringen har bedt om det, sendes alarm etter 30 sekunder.</li>
-          <li><strong>Batteristyringen må si OK.</strong> Melder batteriet feil, går alarmen.</li>
-          <li><strong>Auto/manuell-bryter.</strong> Står bryteren i skuret på manuell, kan ingenting starte automatisk. Praktisk ved vedlikehold.</li>
-          <li><strong>Ærlig om det som gjenstår.</strong> Automatisk start uten tilsyn skal godkjennes av forsikringsselskapet, og skuret trenger ventilasjon, lyddemping og brann- og CO-sikring. Se «Gjennomtenkt».</li>
+          <li><strong>Etterkjøling på autostart-kortet må være under 30 s.</strong> Mange kort lar motoren gå videre en stund etter at kjør-signalet faller. Med 60 s etterkjøling ser PLS-en «kjører» uten kjør i over 30 s og gir falsk alarm for ukommandert gange. Med 5 s skjer det ikke. Dette må sjekkes når kortet velges, eller alarmtiden justeres.</li>
+          <li><strong>Forvarmingen virker på startønsket, ikke på temperaturen alene.</strong> Hjelpestrømmen slås bare på når aggregatet faktisk trengs, så skuret varmes ikke unødvendig.</li>
+          <li><strong>Maks gangtid er en sikring, ikke normal drift.</strong> Med 2,5 kW lading tar det ca. 2 timer fra 30 til 90 %, godt under 6 t.</li>
+        </ul>
+        <h3>Ikke avklart ennå</h3>
+        <ul class="punkter">
+          <li>Automatisk start uten tilsyn skal godkjennes av forsikringsselskapet.</li>
+          <li>230 V, jording og overspenningsvern skal godkjennes av elektriker.</li>
         </ul>
       </div>
     </section>
 
-    <!-- 6. Fjernovervåking -->
+    <!-- Overvåking -->
     <section id="overvaking" class="seksjon" aria-labelledby="overvaking-tittel">
       <div class="wrap slik-grid">
         <div>
-          <p class="overline">Hjemmefra</p>
-          <h2 id="overvaking-tittel">Fjernovervåking</h2>
-          <p class="lead">En 5G-ruter står på hele tiden i sesongen. En liten server på hytta sender status til telefonen over mobilnettet og varsler når noe trenger oppmerksomhet.</p>
+          <p class="overline">Overvåking</p>
+          <h2 id="overvaking-tittel">Fjernovervåking over 5G</h2>
           <ul class="punkter">
-            <li><strong>Status når du vil:</strong> batterinivå, sol, forbruk, om generatoren går og temperaturen i skuret.</li>
-            <li><strong>Varsel når det trengs:</strong> generatoren starter ikke, CO-alarm, nødstopp, lite diesel, svært lavt batteri eller mistet kontakt.</li>
-            <li><strong>Livstegn:</strong> styringen og serveren passer på hverandre. Uteblir livstegnet i 60 sekunder, går alarmen.</li>
-            <li><strong>Sikkert:</strong> styringsboksens egen nettside er ikke åpen mot internett. Forbindelsen hjem går gjennom en kryptert tunnel som bare hytta og telefonen har nøkkel til.</li>
+            <li><strong>Pi som knutepunkt.</strong> Mosquitto (MQTT) og Node-RED eller Home Assistant samler status fra PLS-en og batterimonitoren og sender varsler. Hvilken app som viser varslene, er ikke bestemt.</li>
+            <li><strong>Livstegn.</strong> Pi-en sender et livstegn til en nettverksinngang på PLS-en. Uteblir det i 60 s, gir PLS-en datafeil og alarm lokalt.</li>
+            <li><strong>Hvis hytta forsvinner.</strong> Varsel til telefonen krever at Pi og ruter virker. Faller begge ut, må det oppdages på mottakersiden ved at statusmeldingene uteblir.</li>
+            <li><strong>Fjerntilgang.</strong> Mobilnettet bruker CGNAT, så Pi-en kobler seg ut med VPN (WireGuard eller Tailscale). Ingenting åpnes inn mot hytta, og LOGO!-ens webserver er bare tilgjengelig i lokalnettet.</li>
+            <li><strong>Lokalnett.</strong> Alle enheter har fast adresse. Til skuret går det utendørs Cat6 med overspenningsvern eller fiber.</li>
           </ul>
-          <p class="liten">Varslene i simuleringen er eksempler på hvordan dette kan se ut. Hvilken app som brukes, er ikke bestemt.</p>
+          <p class="liten">Telefonbildet er et eksempel på hvordan status og varsler kan se ut.</p>
         </div>
         <div id="telefon-demo" class="telefon telefon-demo"></div>
       </div>
     </section>
 
-    <!-- 7. Hele året -->
+    <!-- Energibalanse -->
     <section id="aaret" class="seksjon alt" aria-labelledby="aaret-tittel">
       <div class="wrap">
         <p class="overline">Energibalanse</p>
-        <h2 id="aaret-tittel">Hele året</h2>
-        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og overvåkingen på når hytta står tom i sesongen. Fra november til mars er hytta og hele anlegget avslått.</p>
+        <h2 id="aaret-tittel">Måned for måned</h2>
+        <p class="lead">Beregnet sol mot forbruk med dagens bruksmønster: helger vår og høst, folk der fra midten av juni til midten av august, og overvåking på når hytta står tom i sesongen. Anlegget er avslått fra november til mars.</p>
         <div id="aarsdiagram" class="aarsdiagram"></div>
         <p class="liten" id="aarsnotat"></p>
-        <h3>Vinteren: anlegget er avslått</h3>
-        <p>Fra november til mars er hytta stengt, og hele anlegget slås av: ingen ruter, ingen standby, ingen generator og ingen diesel. Batteriet settes fullt i dvale, og i april skrus alt på igjen.</p>
-        <p>Når ingen er der i sesongen, bruker 5G-ruteren, styringen og vekselretteren til sammen ca. 48 W døgnet rundt. Med Starlink ville det vært ca. 115 W, så valget av 5G-ruter mer enn halverer forbruket når hytta står tom.</p>
+        <p>Med 5G-ruter er standby ca. 48 W mot ca. 115 W med Starlink. Det mer enn halverer forbruket når hytta står tom, og gjør at sola dekker standby også de fleste grå uker i sesongen. Aggregatet trengs først og fremst på grå helger med folk og i slutten av oktober.</p>
       </div>
     </section>
 
-    <!-- 8. Gjennomtenkt -->
-    <section id="gjennomtenkt" class="seksjon" aria-labelledby="gjennomtenkt-tittel">
+    <!-- Status -->
+    <section id="status" class="seksjon" aria-labelledby="status-tittel">
       <div class="wrap">
         <p class="overline">Status</p>
-        <h2 id="gjennomtenkt-tittel">Gjennomtenkt</h2>
+        <h2 id="status-tittel">Gjort, neste steg og åpne punkter</h2>
         <div class="to-kolonner">
           <div class="kort">
-            <h3>Dette er gjort</h3>
+            <h3>Gjort</h3>
             <ul class="sjekk">
-              <li>Forbruk, batteri, vekselretter og solceller er dimensjonert i et regneark med alle antakelser synlige.</li>
-              <li>Reglene for styringen er skrevet ned punkt for punkt: start, stopp, forvarming, hvile, lastfrakobling, alarmer og testkjøring.</li>
-              <li>Reglene er testet i en simulering med elleve scenarioer, og det er den samme logikken som kjører på denne siden.</li>
-              <li>Alle inn- og utganger på styringen er planlagt, med sikkerhetssignalene koblet slik at brudd gir stopp.</li>
-              <li>Nettverket på hytta og forbindelsen hjem er planlagt, med 5G-ruter i stedet for Starlink.</li>
+              <li>Dimensjonering i regneark: last, batteri, vekselretter, sol, aggregat og drivstoff.</li>
+              <li>Logikkspesifikasjon for modul 1–10.</li>
+              <li>Referansesimulering i Python med 11 scenarioer, portet til denne siden med de samme scenarioene som tester.</li>
+              <li>I/O-plan lagt inn i LOGO!Soft Comfort.</li>
+              <li>Nettverksvisningen delvis satt opp.</li>
             </ul>
           </div>
           <div class="kort">
-            <h3>Dette er neste steg</h3>
-            <ul class="neste">
-              <li>Velge generator med ferdig montert autostart-kort. Dieseldrevet, lyddempet kappe, elstart, gjerne vannkjølt 1500-omdreiningstype for mindre støy og lengre levetid.</li>
-              <li>Velge batterimonitor og bekrefte noen tekniske detaljer på styringen mot håndboken.</li>
-              <li>Sjekke 5G-dekningen på holmen og velge ruter, eventuelt med utendørs antenne.</li>
-              <li>Elektriker til skuret, kabling på 30 m, jording og overspenningsvern.</li>
-              <li>Skur med ventilasjon, lyddemping, brann- og CO-sikring.</li>
-              <li>Avklare med forsikringsselskapet at automatisk start uten tilsyn er i orden.</li>
-              <li>Bygge programmet, teste det i simulering, og så sette i gang modul for modul.</li>
-            </ul>
+            <h3>Neste steg</h3>
+            <ol class="neste-liste">
+              <li>Velge aggregat og få manual og koblingsskjema for autostart-kortet.</li>
+              <li>Velge batterimonitor og finne registerkartet, koble batterinivået inn og bygge modul 2.</li>
+              <li>Bygge og simulere FBD modul for modul: klar, terskler, forvarming, Q1-lås, stopp og hvile, alarmer, lastfrakobling, datavakt, testkjøring.</li>
+              <li>Verifisere de åpne punktene under mot LOGO! 9-manualen.</li>
+              <li>Måle 5G-dekning, velge ruter, sette opp Pi, VPN og livstegn.</li>
+              <li>Elektriker for skur, kabling, jording og overspenningsvern. Avklare forsikring.</li>
+            </ol>
           </div>
+        </div>
+        <div class="kort apne">
+          <h3>Åpne tekniske punkter</h3>
+          <ul class="punkter">
+            <li>LOGO! 9 som Modbus TCP-klient er oppgitt, men ikke funnet i databladet, som nevner MQTT. Må sjekkes i manualen.</li>
+            <li>Hvilke innganger som kan brukes analogt på LOGO! 9. På LOGO! 8 er det I1, I2, I7 og I8, og det påvirker I/O-planen siden I7 er BMS OK.</li>
+            <li>Om nettverks-analoginnganger og UDF finnes i V9, og hva menyene heter.</li>
+            <li>Om utvidelsesmoduler som AM4 passer til LOGO! 9.</li>
+            <li>Retningen på Analog threshold trigger, og om Yearly timer har månedsmodus. Begge testes i simulering.</li>
+            <li>Demoversjonen av Soft Comfort V9 kan ha sperret overføring til enheten (én kilde).</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- 9. Ordliste + FAQ -->
+    <!-- Ordliste og spørsmål -->
     <section id="ordliste" class="seksjon alt" aria-labelledby="ordliste-tittel">
       <div class="wrap to-kolonner">
         <div>
           <h2 id="ordliste-tittel">Ordliste</h2>
           <dl class="ordliste">
-            <dt>kWh (kilowattime)</dt><dd>En mengde strøm. 1 kWh er det en panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta i ti timer, eller lader en mobil rundt 60 ganger.</dd>
-            <dt>kW (kilowatt)</dt><dd>Effekt, altså hvor mye strøm som brukes eller lages akkurat nå. En vannkoker bruker ca. 2 kW. Vedkløyveren bruker 2,2 kW og trenger tre ganger så mye idet den starter.</dd>
-            <dt>kWp</dt><dd>Solcellenes merkeeffekt i full sol. 2 kWp er omtrent fem store paneler.</dd>
-            <dt>Batterinivå</dt><dd>Hvor fullt batteriet er, i prosent. Styringen bruker faste grenser: 15, 30, 40 og 90 %.</dd>
-            <dt>Vekselretter</dt><dd>Lager vanlig 230 V strøm av batteriets likestrøm.</dd>
-            <dt>Laderegulator</dt><dd>Sørger for at solcellene lader batteriet riktig.</dd>
-            <dt>Batteristyring (BMS)</dt><dd>Elektronikken inne i batteriet som passer på at det ikke overlades, tømmes helt eller blir for varmt.</dd>
-            <dt>Styringen</dt><dd>En liten industriell styringsboks som leser signaler og styrer generatoren etter faste regler.</dd>
-            <dt>Autostart-kort</dt><dd>Generatorens egen kontroller. Styringen sier bare «kjør», og kortet gjør resten: starter motoren, melder «går» eller «feil».</dd>
-            <dt>5G-ruter</dt><dd>En ruter med SIM-kort som gir internett over mobilnettet, som en mobiltelefon. Gir Wi-Fi på hytta og sender status hjem.</dd>
-            <dt>Standby</dt><dd>Det hytta bruker når ingen er der: 5G-ruter, styring og vekselretter, ca. 48 W til sammen.</dd>
-            <dt>Ikke-vitale laster</dt><dd>Vannpumpe, ladere og verktøy. Disse kobles fra hvis batteriet blir svært lavt, så lys, kjøleskap og overvåking varer lengst mulig.</dd>
-            <dt>Fail-safe</dt><dd>Koblet slik at en feil (brudd, strømløs styring) gir «stopp», aldri «kjør».</dd>
+            <dt>SOC</dt><dd>State of charge, batterinivå i prosent.</dd>
+            <dt>DoD</dt><dd>Depth of discharge, hvor stor del av batteriet som brukes. Her 80 %.</dd>
+            <dt>C-rate</dt><dd>Lade- eller utladeeffekt i forhold til kapasiteten. 0,3 C på 8,4 kWh er ca. 2,5 kW.</dd>
+            <dt>kWp</dt><dd>Panelenes merkeeffekt ved standard testforhold.</dd>
+            <dt>MPPT</dt><dd>Laderegulator som holder panelene i punktet med mest effekt.</dd>
+            <dt>BMS</dt><dd>Batteriets egen elektronikk mot overlading, dyp utlading og overtemperatur.</dd>
+            <dt>PLS</dt><dd>Programmerbar logisk styring, her Siemens LOGO! 9.</dd>
+            <dt>FBD</dt><dd>Funksjonsblokkdiagram, måten LOGO!-programmet tegnes på.</dd>
+            <dt>Autostart-kort</dt><dd>Aggregatets egen kontroller. Starter motoren, overvåker oljetrykk og temperatur, og melder «kjører» og «feil».</dd>
+            <dt>NC / NO</dt><dd>Normalt lukket / normalt åpen kontakt.</dd>
+            <dt>On-delay / Off-delay</dt><dd>Tidsforsinkelse på innkobling / utkobling av et signal.</dd>
+            <dt>Reset-dominant lås</dt><dd>Lås der stopp vinner hvis start og stopp kommer samtidig.</dd>
+            <dt>Hysterese</dt><dd>Ulik terskel for av og på, for eksempel 30 % og 90 %, så signalet ikke flagrer.</dd>
+            <dt>Modbus TCP / RTU</dt><dd>Industriprotokoll over nettverk / over RS485.</dd>
+            <dt>MQTT</dt><dd>Lett meldingsprotokoll for status og varsler.</dd>
+            <dt>CGNAT</dt><dd>Mobiloperatøren deler én offentlig adresse på mange kunder, så hytta kan ikke nås direkte utenfra.</dd>
           </dl>
         </div>
         <div>
           <h2>Spørsmål og svar</h2>
-          <details><summary>Hvor mye støy blir det fra generatoren?</summary><p>Den står i eget skur ca. 30 m fra hytta, med lyddempet kappe. Modellen er ikke valgt, så støynivået er ikke kjent ennå. Om sommeren er det beregnet at den nesten aldri trenger å gå.</p></details>
-          <details><summary>Hvor ofte går generatoren?</summary><p>Fra april til september er det beregnet at sola dekker forbruket, så generatoren står stort sett stille. Den starter først i lengre perioder med grått vær, typisk en grå helg i september eller en tom uke i oktober. Prøv scenarioet «Ingen på hytta i oktober». Fra november til mars er anlegget avslått.</p></details>
-          <details><summary>Hva om noe ryker mens ingen er der?</summary><p>Alle feil gir stopp, ikke start. Du får alarm på telefonen, og hytta går videre på batteri og sol så lenge det rekker. I verste fall slår batteristyringen av strømmen for å beskytte batteriet, og alt må startes opp igjen manuelt. Da må noen reise ut.</p></details>
-          <details><summary>Kan vi bygge ut senere?</summary><p>Ja. Flere solceller eller et større batteri er bare å koble til. Styringen har ledige inn- og utganger.</p></details>
-          <details><summary>Hvor sikre er tallene?</summary><p>Alle tall er beregnet ut fra antakelser om forbruk og soldata for Kragerø. De er merket som beregnet eller anslått på siden. Virkelig forbruk og vær vil avvike, og det er derfor anlegget er dimensjonert med 25 % margin og med en generator som tar resten.</p></details>
-          <details><summary>Hva skjer om vinteren?</summary><p>Hytta er stengt fra november til mars, og hele anlegget slås av. Da er det ikke noe forbruk, ingen generatorkjøring og ingen diesel. Se avsnittet «Hele året».</p></details>
+          <details><summary>Hvorfor en PLS og ikke bare Raspberry Pi-en?</summary><p>LOGO! er bygd for kontinuerlig drift, har reléutganger og starter rett opp etter strømbrudd. Sikkerhetslogikken skal ikke avhenge av et operativsystem, et minnekort eller en programvareoppdatering. Pi-en gjør bare overvåking og varsling; faller den ut, styrer PLS-en videre.</p></details>
+          <details><summary>Hvorfor eget autostart-kort i tillegg?</summary><p>Kortet håndterer selve startsekvensen, gløding, startforsøk og motorvern som oljetrykk og temperatur. Det er matchet mot aggregatets sensorer. PLS-en trenger bare å si «kjør» og lese tilbake «kjører» og «feil».</p></details>
+          <details><summary>Hvorfor ikke mer sol og batteri i stedet for aggregat?</summary><p>Et fullt batteri dekker ca. 75 % av en helg helt uten sol. Å dekke resten uten aggregat krever et vesentlig større batteri som sjelden blir brukt fullt ut. Aggregatet tar de få grå periodene i stedet.</p></details>
+          <details><summary>Hvor mye går aggregatet?</summary><p>Fra april til september er det beregnet at sola dekker et snittdøgn. Aggregatet starter på grå helger med folk og i grå perioder i oktober, typisk 2 timer per gang og ca. 1,1 liter diesel i timen.</p></details>
+          <details><summary>Hva om 5G-dekningen er dårlig?</summary><p>Styring, generatorstart og vern er lokalt og påvirkes ikke. Bare varsling og fjerntilgang faller ut. Dekningen måles før ruter velges, eventuelt med utendørs antenne.</p></details>
+          <details><summary>Hvor mye støy blir det?</summary><p>Aggregatet står i eget skur 30 m unna, med lyddempet kappe. 1500 o/min vannkjølt er tydelig roligere enn 3000 o/min luftkjølt. Faktisk nivå er ukjent til modell er valgt.</p></details>
+          <details><summary>Kan anlegget bygges ut?</summary><p>Mer sol og batteri kobles på DC-siden. På PLS-en er I8 ledig, men alle fire reléutgangene er i bruk, så flere utganger krever en utvidelsesmodul.</p></details>
+          <details><summary>Hvor sikre er tallene?</summary><p>Alle tall er beregnet fra antatt forbruk og soldata for Kragerø, ikke målt. Forbruket har 25 % margin, og aggregatet tar avvikene.</p></details>
         </div>
       </div>
     </section>

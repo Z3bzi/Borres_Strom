@@ -178,3 +178,38 @@ export function manedsBalanse(kwp = PV_KWP): ManedsBalanse[] {
     };
   });
 }
+
+/**
+ * Dimensjonering som i arket «Resultat» og «Bruksmønster» (helgesjekk), regnet på lastlisten
+ * over (med 5G-ruter). Tallene på nettsiden er hentet herfra og låst av tester.
+ */
+export function dimensjonering() {
+  const f = FORUTSETNINGER;
+  const fast = LASTER.filter((l) => l.type === 'Fast');
+  const verktoy = LASTER.filter((l) => l.type === 'Verktøy');
+  const fastKontW = fast.reduce((s, l) => s + l.antall * l.effektW, 0);
+  const fastToppW = fast.reduce((s, l) => s + l.antall * l.effektW * l.startfaktor, 0);
+  const verktoyKontW = Math.max(...verktoy.map((l) => l.antall * l.effektW));
+  const verktoyToppW = Math.max(...verktoy.map((l) => l.antall * l.effektW * l.startfaktor));
+  const forbrukMedMarginKWh = (DAGSFORBRUK_WH / 1000) * (1 + f.headroom);
+  const dcPerDognKWh = forbrukMedMarginKWh / f.vekselretterVirkningsgrad;
+  const brukbartKWh = BATTERI_KWH * f.dod;
+  return {
+    /** Vekselretter, min. kontinuerlig (W) inkl. margin (Resultat!B11) */
+    vekselretterKontW: (fastKontW + verktoyKontW) * (1 + f.headroom),
+    /** Toppeffekt inkl. margin (W), motorstart på vedkløyveren (Resultat!B13) */
+    toppW: (fastToppW + verktoyToppW) * (1 + f.headroom),
+    /** Batteri som regnearkets formel ville gitt for ett døgns autonomi (kWh, Resultat!B16) */
+    batteriNodvendigKWh: (forbrukMedMarginKWh * f.autonomidager) / (f.dod * f.vekselretterVirkningsgrad),
+    /** Hvor mange døgn planlagt batteri holder uten sol og generator */
+    autonomiDogn: brukbartKWh / dcPerDognKWh,
+    brukbartKWh,
+    /** Andel av en helg (2 døgn) uten sol som fullt batteri dekker (Bruksmønster!B25) */
+    helgDekning: Math.min(1, brukbartKWh / (2 * dcPerDognKWh)),
+    /** Solcelleeffekt som dekker et snittdøgn i september (kWp, Resultat!B19) */
+    kwpSeptember: dcPerDognKWh / (kWhPerKwpPerDogn(8) * f.systemtap),
+    /** Generator, min. kontinuerlig (W): største av last og lading + snittlast (Resultat!B28) */
+    generatorMinW: Math.max((fastKontW + verktoyKontW) * (1 + f.headroom),
+      (BATTERI_KWH * f.cRate / f.laderVirkningsgrad) * 1000 + (forbrukMedMarginKWh * 1000) / 24),
+  };
+}

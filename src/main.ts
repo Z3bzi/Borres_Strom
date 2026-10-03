@@ -62,9 +62,9 @@ function flowDemo(): void {
   const flow = new FlowDiagram(el);
   const faser = [
     { solW: 1400, forbrukW: 180, generatorW: 0, batteriW: 1200, niva: 70, tekst: 'Midt på dagen: sola lader batteriet og forsyner hytta samtidig.' },
-    { solW: 0, forbrukW: 350, generatorW: 0, batteriW: -390, niva: 55, tekst: 'Kvelden: lys, ladere og kjøleskap går på batteriet.' },
-    { solW: 0, forbrukW: 48, generatorW: 0, batteriW: -53, niva: 28, tekst: 'Natta, batteriet under 30 % i 5 minutter: styringen starter generatoren.' },
-    { solW: 0, forbrukW: 48, generatorW: 2500, batteriW: 2450, niva: 60, tekst: 'Generatoren lader med ca. 2,5 kW til batteriet er over 90 %, og stopper så av seg selv.' },
+    { solW: 300, forbrukW: 250, generatorW: 2500, batteriW: 2500, niva: 35, tekst: 'Dagtid, batteriet under 30 % i 5 minutter: aggregatet starter og lader med ca. 2,5 kW til 80 %.' },
+    { solW: 0, forbrukW: 350, generatorW: 2500, batteriW: 2110, niva: 60, tekst: 'Kveld, batteriet under 40 % før kl. 20: aggregatet lader opp til 80 % før natta.' },
+    { solW: 0, forbrukW: 60, generatorW: 0, batteriW: -67, niva: 75, tekst: 'Natt: hytta går på batteriet. Aggregatet står alltid stille fra 22:00 til 07:00.' },
   ];
   let i = 0;
   const vis = () => { const f = faser[i]!; flow.oppdater(f); tekst.textContent = f.tekst; };
@@ -99,7 +99,7 @@ function telefonDemo(): void {
   t.status({ niva: 84, solW: 920, forbrukW: 48, generator: 'Av', tempC: 12, tid: '13:42', frakoblet: false });
   t.varsler([
     { t: 0, tid: '07:12', tittel: 'Generatoren startet', tekst: 'Automatisk start, batteriet er på 29 %.', alvor: 'info' },
-    { t: 1, tid: '09:31', tittel: 'Generatoren stoppet', tekst: 'Batteriet er over 90 % og generatoren har gått i over 30 minutter.', alvor: 'info' },
+    { t: 1, tid: '09:31', tittel: 'Generatoren stoppet', tekst: 'Batteriet er over 80 % og generatoren har gått i over 30 minutter.', alvor: 'info' },
     { t: 2, tid: '13:40', tittel: 'Generatoren starter ikke', tekst: 'Startsignal er sendt, men generatoren har ikke startet på 90 sekunder. (Eksempel på alarm)', alvor: 'alarm' },
   ]);
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { daglengde, soldag, klarProduksjonW, Skyer, produksjonW } from '../src/sim/solar';
-import { dogEnergiWh, last } from '../src/sim/load';
+import { dogEnergiWh, last, nattbehovWh } from '../src/sim/load';
+import { KVELD_GRENSE, LADES_TIL } from '../src/sim/logic';
 import { DAGSFORBRUK_WH, FORBRUK_DC_PER_DOGN, STANDBY_W, dimensjonering, manedsBalanse, PV_KWP, produksjonPerDogn } from '../src/sim/data';
 import { Hytte } from '../src/sim/cabin';
 import { SCENARIOER } from '../src/sim/scenarios';
@@ -98,6 +99,23 @@ describe('dimensjonering (tallene i teksten på siden)', () => {
   });
 });
 
+describe('nattbehov og kveldsgrense (modul 11)', () => {
+  it('en natt 20–07 med 6 personer trenger ca. 1,4 kWh, 17 % av batteriet (21 % med margin)', () => {
+    const wh = nattbehovWh(6);
+    expect(wh).toBeGreaterThan(1380);
+    expect(wh).toBeLessThan(1480);
+    expect((wh / 8400) * 100).toBeCloseTo(17, 0);
+    expect(((wh * 1.25) / 8400) * 100).toBeCloseTo(21.3, 0);
+    expect(nattbehovWh(0)).toBeCloseTo((48 * 11) / 0.9, 0);
+  });
+
+  it('kveldsgrensen er 15 % + nattbehovet med margin, rundet opp til nærmeste 5 %', () => {
+    const behov = ((nattbehovWh(6) * 1.25) / 8400) * 100;
+    expect(KVELD_GRENSE).toBe(Math.ceil((15 + behov) / 5) * 5);
+    expect(LADES_TIL).toBe(80);
+  });
+});
+
 describe('temperatur', () => {
   it('januar natt er under 5 °C, juli dag over', () => {
     expect(temperatur(20, 3)).toBeLessThan(5);
@@ -124,12 +142,15 @@ describe('hele anlegget', () => {
     const h = kjor('september');
     expect(h.stats.starter).toBeGreaterThanOrEqual(1);
     expect(h.stats.liter).toBeGreaterThan(0);
-    expect(h.logg.some((l) => l.tekst.includes('under 30 % i 5 minutter'))).toBe(true);
-    expect(h.logg.some((l) => l.tekst.includes('over 90 %') && l.tekst.includes('stopper'))).toBe(true);
+    expect(h.stats.kveldsladinger).toBe(1);
+    expect(h.logg.some((l) => l.tekst.startsWith('Klokka er mellom 17 og 20'))).toBe(true);
+    expect(h.logg.some((l) => l.tekst.includes('over 80 %') && l.tekst.includes('stopper'))).toBe(true);
   });
 
-  it('kald morgen i april: forvarming 20 min før start', () => {
+  it('kald natt i april: venter til 07:00, forvarming 20 min før start', () => {
     const h = kjor('kald');
+    expect(h.logg.some((l) => l.tekst.includes('nattstopp (22–07)'))).toBe(true);
+    expect(h.logg.find((l) => l.tekst.startsWith('Det er kaldt i skuret'))!.tid).toBe('07:00');
     expect(h.stats.forvarmetS).toBeGreaterThanOrEqual(1200);
     expect(h.stats.starter).toBeGreaterThanOrEqual(1);
     expect(h.logg.some((l) => l.tekst.includes('Forvarmingen er ferdig'))).toBe(true);
@@ -173,6 +194,16 @@ describe('hele anlegget', () => {
     const h = kjor('lavt');
     expect(h.logg.some((l) => l.tekst.includes('kobler fra ikke-vitale laster'))).toBe(true);
     expect(h.logg.some((l) => l.tekst === 'Generatoren går, så ikke-vitale laster kobles inn igjen.')).toBe(true);
+  });
+
+  it('ingen scenarioer starter aggregatet mellom 22:00 og 07:00', () => {
+    for (const sc of SCENARIOER) expect(kjor(sc.id).stats.natteStarter, sc.id).toBe(0);
+  });
+
+  it('nattstopp avbryter ladingen kl. 22:00 i «Batteriet blir veldig lavt»', () => {
+    const h = kjor('lavt');
+    const stopp = h.logg.find((l) => l.tekst.startsWith('Klokka er 22:00'))!;
+    expect(stopp.tid).toBe('22:00');
   });
 
   it('månedlig testkjøring: 30 min den 1. kl. 12:00', () => {

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Simulerer FBD-modul 1-10 (Overlevering Hytte off-grid) mot en generisk AMF. 1 steg = 1 s.
+"""Simulerer FBD-modul 1-11 (Overlevering Hytte off-grid) mot en generisk AMF. 1 steg = 1 s.
+Modul 11 (nattstopp og kveldslading) er bare aktiv når klokka er kjent (tid0 satt), ellers er logikken som før.
 Kjør: python logo_sim.py   (assert-baserte scenarioer, ingen avhengigheter)
 Antakelser å verifisere i Soft Comfort: RS er reset-dominant, terskelretning, off-delay-oppførsel."""
 
@@ -47,11 +48,13 @@ class Sim:
         s.q1 = s.alarm = False
         s.wipe = s.t = 0  # wipe = gjenstående sek av testkjøring (Wiping relay)
         s.log, s.last = [], {}
-        s.low, s.d5 = Trig(30, 90), On(300)
+        s.low, s.d5 = Trig(30, 80), On(300)  # lad til 80 % (global regel)
         s.kald, s.d20 = Trig(5, 8), On(1200)
         s.d30, s.d6h, s.hvile = On(1800), On(21600), Off(600)
         s.d90, s.d30u, s.hbd = On(90), On(30), Off(60)
         s.shed = Trig(15, 40)
+        s.tid0 = None  # klokkeslett (s etter midnatt) ved t=0; None = modul 11 av
+        s.kvl, s.d5k = False, On(300)  # kveldslading (RS) og 5 min forsinkelse
 
     def step(s):
         i = s.i
@@ -60,15 +63,22 @@ class Sim:
         low = s.low(s.soc)                                                    # 2
         test = s.wipe > 0 and s.soc < 70 and klar                             # 10
         s.wipe = max(0, s.wipe - 1)
-        onske = s.d5(low) or test
+        natt = False                                                          # 11
+        if s.tid0 is not None:
+            k = (s.tid0 + s.t) % 86400
+            natt = k >= 22 * 3600 or k < 7 * 3600                             # nattstopp 22-07
+            kvset = s.d5k(17 * 3600 <= k < 20 * 3600 and s.soc < 40)          # kveld 17-20, under 40 % (nattbehov)
+            if s.soc > 80 or natt: s.kvl = False                              # reset-dominant
+            elif kvset: s.kvl = True
+        onske = (s.d5(low) or test or s.kvl) and not natt
         kald = s.kald(s.temp)                                                 # 3
         q3 = (onske and kald) or I1
         forv = s.d20(q3)
         kjor = onske and (not kald or forv)
         d30, d6h = s.d30(I1), s.d6h(s.q1)                                     # 5
-        stopp = (not low and d30) or d6h
+        stopp = (not low and not s.kvl and d30) or d6h
         hvile = s.hvile(s.q1)                                                 # 6
-        if stopp or not klar: s.q1 = False                                    # 4 (reset-dominant)
+        if stopp or not klar or natt: s.q1 = False                            # 4 (reset-dominant)
         elif kjor and not hvile: s.q1 = True
         startfeil = s.d90(s.q1 and not I1)                                    # 7
         ukom = s.d30u(I1 and not s.q1)
@@ -99,11 +109,11 @@ def demo():
     s = run(Sim(soc=25), 400); near(at(s, "Q1", True), 300)
     # 2 kaldt: Q3 etter 5 min, Q1 20 min senere
     s = run(Sim(soc=25, temp=0), 1600); near(at(s, "Q3", True), 300); near(at(s, "Q1", True), 1500)
-    # 3 full syklus: stopp først når SOC>90 og >=30 min gange; HVILE hindrer omstart i 10 min
+    # 3 full syklus: stopp først når SOC>80 og >=30 min gange; HVILE hindrer omstart i 10 min
     s = Sim(soc=25)
     while s.t < 400 or s.q1: s.step()
     rise, fall = at(s, "Q1", True), s.t
-    assert fall - rise > 1800 and s.soc > 89.5, (rise, fall, s.soc)
+    assert fall - rise > 1800 and s.soc > 79.5, (rise, fall, s.soc)
     s.soc = 20; run(s, 700); near(at(s, "Q1", True, after=fall), fall + 600, 15)
     # 4 Q1 uten I1: STARTFEIL etter 90 s
     s = run(Sim(soc=25, amf=Amf(mode="no_start")), 500); near(at(s, "Q4", True), 300 + 90, 4)
@@ -126,6 +136,18 @@ def demo():
     s = run(Sim(soc=80), 10); s.wipe = 1800; run(s, 60); assert at(s, "Q1", True) is None
     # 11 AMF-feil (I2): Q1 av og alarm
     s = run(Sim(soc=25, amf=Amf(mode="fault")), 600); assert at(s, "Q1", False, after=1) and s.alarm
+    # 12 nattstopp: start 21:55, stopp 22:00, ingen forvarming eller start før 07:00 (kaldt)
+    s = Sim(soc=25, temp=0); s.tid0 = 21 * 3600 + 45 * 60; run(s, 34600)
+    near(at(s, "Q3", True), 300); near(at(s, "Q3", False, after=301), 900)  # forvarming avbrutt kl. 22
+    near(at(s, "Q3", True, after=901), 33300); near(at(s, "Q1", True), 33300 + 1200)  # 07:00 + 20 min
+    s = Sim(soc=25); s.tid0 = 21 * 3600 + 50 * 60; run(s, 33100)
+    near(at(s, "Q1", True), 300); near(at(s, "Q1", False, after=301), 600); near(at(s, "Q1", True, after=601), 33000)
+    # 13 kveldslading: under 40 % kl. 17-20 gir start etter 5 min og lading til over 80 %, ferdig før 22
+    s = Sim(soc=35); s.tid0 = 18 * 3600
+    while s.t < 400 or s.q1: s.step()
+    near(at(s, "Q1", True), 300); assert s.soc > 79.5 and s.t < 4 * 3600, (s.t, s.soc)
+    for soc, tid in ((45, 18), (35, 20)):  # over 40 %, eller etter kl. 20: ingen start
+        s = Sim(soc=soc); s.tid0 = tid * 3600; run(s, 7000); assert at(s, "Q1", True) is None, (soc, tid)
     print("OK: alle scenarioer bestått")
 
 

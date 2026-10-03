@@ -70,20 +70,21 @@ LOGO! 12/24RCE har 8 digitale innganger og 4 reléutganger. Alle sikkerhetssigna
 
 ## FBD-logikk
 
-Logikken er delt i ti moduler. Terskler og tider under er startverdier som skal justeres i simulering og ved igangkjøring.
+Logikken er delt i elleve moduler. Terskler og tider under er startverdier som skal justeres i simulering og ved igangkjøring.
 
 1. **KLAR** = I3 AND I6 AND I5 AND NOT I2 AND I4 (Auto). AND har fire innganger, så bruk to AND-blokker.
-2. **SOC-terskler:** Analog threshold trigger på SOC (nettverks-analoginngang): på under 30 %, av over 90 %. Resultat SOCLAV går gjennom 5 min On-delay til STARTONSKE (= OR TESTKJØR). Sjekk terskelretningen i simulering.
+2. **SOC-terskler:** Analog threshold trigger på SOC (nettverks-analoginngang): på under 30 %, av over 80 % (endret fra 90 % 3. oktober 2026: aggregatet lader til 80 %). Resultat SOCLAV går gjennom 5 min On-delay til STARTONSKE (= OR TESTKJØR). Sjekk terskelretningen i simulering.
 3. **Forvarming:** KALD = temperatur under 5 °C (hysterese 5/8). Q3 = (STARTONSKE AND KALD) OR I1. 20 min On-delay gir FORVARMET. KJØR = STARTONSKE AND (NOT KALD OR FORVARMET).
-4. **Q1** = Latching relay (RS), ikke retentiv. Set = KJØR AND KLAR AND NOT HVILE. Reset = STOPP OR NOT KLAR.
-5. **STOPP** = (NOT SOCLAV AND 30 min On-delay på I1) OR 6 t On-delay på Q1 (maks gangtid).
+4. **Q1** = Latching relay (RS), ikke retentiv. Set = KJØR AND KLAR AND NOT HVILE. Reset = STOPP OR NOT KLAR OR NATT.
+5. **STOPP** = (NOT SOCLAV AND NOT KVELDLADING AND 30 min On-delay på I1) OR 6 t On-delay på Q1 (maks gangtid).
 6. **HVILE** = 10 min Off-delay på Q1, som hindrer rask omstart.
 7. **Alarmer:** STARTFEIL = 90 s On-delay (Q1 AND NOT I1). UKOMMANDERT = 30 s On-delay (I1 AND NOT Q1). I tillegg I2, NOT I3, NOT I6, NOT I5, NOT BMS OK og DATAFEIL. Alt til Q4 via Asynchronous pulse generator, med Message text-blokker og lagring til kvittering med Softkey.
 8. **Lastfrakobling:** SHED-terskel på SOC (på under 15 %, av over 40 %). Q2 = NOT SHED OR I1.
 9. **Datavakt:** heartbeat fra Pi på nettverksinngang, 60 s Off-delay gir DATAOK. DATAFEIL = NOT DATAOK.
 10. **Testkjøring:** Yearly timer (månedsmodus hvis tilgjengelig, ellers Weekly) og 30 min Wiping relay. Bare når SOC er under 70 % og KLAR.
+11. **Natt og kveld** (lagt til 3. oktober 2026): NATT = Weekly timer 22:00–07:00. KVELD = Weekly timer 17:00–20:00. KVELDLADING = RS, Set = 5 min On-delay (KVELD AND SOC < 40 %), Reset = SOC > 80 % OR NATT. STARTONSKE = (SOCLAV forsinket OR TESTKJØR OR KVELDLADING) AND NOT NATT. Grensen 40 % er 15 % rest kl. 07 + nattbehov 20–07 for 6 personer (ca. 1,43 kWh DC, 17 %, 21 % med 25 % margin), rundet opp.
 
-**Simuler minst:** lavt SOC gir start etter 5 min. Kaldt gir forvarming 20 min før start. Q1 uten I1 gir STARTFEIL etter 90 s. At KLAR faller bort gir stopp. At heartbeat uteblir gir DATAFEIL.
+**Simuler minst:** nattstopp avbryter forvarming og gange kl. 22 og slipper kl. 07, og kveldslading starter under 40 % kl. 17–20. Lavt SOC gir start etter 5 min. Kaldt gir forvarming 20 min før start. Q1 uten I1 gir STARTFEIL etter 90 s. At KLAR faller bort gir stopp. At heartbeat uteblir gir DATAFEIL.
 
 ## Generator, autostart-kort og skur
 

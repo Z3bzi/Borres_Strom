@@ -40,10 +40,10 @@ export interface SimOppsett {
   hendelser?: PlanlagtHendelse[];
 }
 
-export type GeneratorTilstand = 'av' | 'forvarmer' | 'starter' | 'gaar' | 'hviler' | 'feil';
+export type GeneratorTilstand = 'av' | 'forvarmer' | 'starter' | 'gaar' | 'hviler' | 'natt' | 'feil';
 
 export const GENERATOR_TEKST: Record<GeneratorTilstand, string> = {
-  av: 'Av', forvarmer: 'Forvarmer', starter: 'Starter', gaar: 'Går', hviler: 'Hviler', feil: 'Feil',
+  av: 'Av', forvarmer: 'Forvarmer', starter: 'Starter', gaar: 'Går', hviler: 'Hviler', natt: 'Venter (natt)', feil: 'Feil',
 };
 
 export type LoggType = 'generator' | 'batteri' | 'alarm' | 'sol' | 'last' | 'bruker' | 'info';
@@ -86,6 +86,10 @@ export interface Statistikk {
   frakobletS: number;
   stromlosS: number;
   forvarmetS: number;
+  /** Starter mellom 22:00 og 07:00 (skal alltid være 0) */
+  natteStarter: number;
+  /** Antall kveldsladinger (modul 11) */
+  kveldsladinger: number;
 }
 
 export interface Tilstand {
@@ -125,7 +129,7 @@ export class Hytte {
   prover: Prove[] = [];
   stats: Statistikk = {
     solKWh: 0, forbrukKWh: 0, generatorKWh: 0, generatorS: 0, liter: 0, minNiva: 100, maksNiva: 0,
-    starter: 0, alarmer: 0, frakobletS: 0, stromlosS: 0, forvarmetS: 0,
+    starter: 0, alarmer: 0, frakobletS: 0, stromlosS: 0, forvarmetS: 0, natteStarter: 0, kveldsladinger: 0,
   };
   ferdig = false;
 
@@ -145,6 +149,7 @@ export class Hytte {
   private sumSol = 0;
   private sumForbruk = 0;
   private sumN = 0;
+  private ventetNatt = false;
 
   constructor(public oppsett: SimOppsett) {
     const s = oppsett.start;
@@ -247,6 +252,7 @@ export class Hytte {
     if (s.I1) return 'gaar';
     if (s.q1) return 'starter';
     if (s.q3) return 'forvarmer';
+    if (s.natt && s.onskeRaa) return 'natt';
     if (s.hvile) return 'hviler';
     return 'av';
   }
@@ -286,7 +292,7 @@ export class Hytte {
     }
 
     // Styringen leser batterinivå og temperatur, og bestemmer
-    const s = this.ctl.step(this.niva, temp);
+    const s = this.ctl.step(this.niva, temp, sek);
 
     // Energiflyt dette sekundet
     const solW = produksjonW(this.sol, sek, this.vaer, this.skyer, absMinutt, PV_KWP);
@@ -418,33 +424,49 @@ export class Hytte {
 
     // Batterinivå
     if (s.low && !p.low) this.skriv('batteri', `Batteriet er under 30 % (${niva}). Styringen venter 5 minutter før den ber generatoren starte.`);
-    if (!s.low && p.low) this.skriv('batteri', `Batteriet er over 90 % (${niva}).`);
+    if (!s.low && p.low) this.skriv('batteri', `Batteriet er over 80 % (${niva}).`);
 
     if (s.q3 && !p.q3 && !s.I1) {
       this.skriv('generator', `Det er kaldt i skuret (under 5 °C), så forvarmingen av generatoren starter. Den går i 20 minutter før start.`);
     }
 
+    // Modul 11: kveldslading og nattstopp
+    if (s.kveldlading && !p.kveldlading) {
+      this.stats.kveldsladinger++;
+      this.skriv('generator', `Klokka er mellom 17 og 20, og batteriet har vært under 40 % (${niva}) i 5 minutter. Det er for lite for natta, så styringen lader opp til 80 % nå. Da trenger ikke aggregatet å gå om natten.`);
+    }
+
     if (s.q1 && !p.q1) {
       this.testkjoring = s.test;
       this.stats.starter++;
+      const k = sekIDogn(this.dato);
+      if (k >= 22 * 3600 || k < 7 * 3600) this.stats.natteStarter++;
       if (s.test) this.skriv('generator', 'Testkjøring: styringen sender startsignal til generatoren.');
       else if (s.kald) this.skriv('generator', 'Forvarmingen er ferdig etter 20 minutter, så styringen sender startsignal til generatoren.');
+      else if (p.natt) this.skriv('generator', 'Klokka er 07:00 og nattstoppen er over. Batteriet er fortsatt lavt, så styringen sender startsignal til generatoren.');
+      else if (s.kveldlading) this.skriv('generator', 'Kveldslading: styringen sender startsignal til generatoren.');
       else this.skriv('generator', 'Batteriet har vært under 30 % i 5 minutter, så styringen sender startsignal til generatoren.');
     }
     if (!s.q1 && p.q1) {
       let grunn: string;
       if (s.stopp && s.d6h) grunn = 'Generatoren har gått i 6 timer (største tillatte gangtid), så styringen stopper den.';
       else if (s.stopp && this.testkjoring) grunn = 'Testkjøringen er ferdig: generatoren har gått i 30 minutter, så styringen stopper den.';
-      else if (s.stopp) grunn = `Batteriet er over 90 % (${niva}) og generatoren har gått i over 30 minutter, så styringen stopper den.`;
+      else if (s.stopp) grunn = `Batteriet er over 80 % (${niva}) og generatoren har gått i over 30 minutter, så styringen stopper den.`;
+      else if (s.natt) grunn = `Klokka er 22:00, og nattstoppen stopper generatoren til 07:00. Batteriet er på ${niva}.`;
       else if (!i.I3) grunn = 'Nødstoppen er trykket, så styringen stopper generatoren med en gang.';
       else if (!i.I6) grunn = 'CO-/røykvarsleren i skuret har slått ut, så styringen stopper generatoren med en gang.';
       else if (!i.I5) grunn = 'Lite diesel, så styringen stopper generatoren.';
       else if (s.I2) grunn = 'Generatorkontrolleren melder feil, så styringen tar bort startsignalet.';
       else if (!i.I4) grunn = 'Bryteren er satt til manuell, så styringen tar bort startsignalet.';
       else grunn = 'Styringen tar bort startsignalet.';
-      this.skriv('generator', `${grunn} Den må hvile i 10 minutter før den kan starte igjen.`);
+      this.skriv('generator', s.natt ? grunn : `${grunn} Den må hvile i 10 minutter før den kan starte igjen.`);
       this.varsle('info', 'Generatoren stoppet', grunn);
     }
+    if (s.natt && s.onskeRaa && !s.q1 && !this.ventetNatt) {
+      this.ventetNatt = true;
+      this.skriv('generator', `Styringen vil lade batteriet (${niva}), men det er nattstopp (22–07). Aggregatet venter til 07:00, og hytta går på batteriet til da.`);
+    }
+    if (!s.natt) this.ventetNatt = false;
     if (s.I1 && !p.I1) {
       this.skriv('generator', 'Generatoren går og lader batteriet med ca. 2,5 kW.');
       this.varsle('info', 'Generatoren startet', this.testkjoring ? 'Månedlig testkjøring (30 minutter).' : `Automatisk start, batteriet er på ${niva}.`);
@@ -487,8 +509,13 @@ export class Hytte {
 
 function tomSignaler(): Signals {
   return {
-    I1: false, I2: false, klar: true, low: false, test: false, onske: false, kald: false, q3: false, forv: false,
+    I1: false, I2: false, klar: true, low: false, test: false, onskeRaa: false, onske: false, natt: false, kveldlading: false,
+    kald: false, q3: false, forv: false,
     kjor: false, d30: false, d6h: false, stopp: false, hvile: false, q1: false, startfeil: false, ukom: false,
     dataok: true, now: false, alarm: false, shed: false, q2: true,
   };
+}
+
+function sekIDogn(d: Date): number {
+  return d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds();
 }

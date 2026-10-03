@@ -1,4 +1,4 @@
-/** Batterimåler (stående batteri) med merker på 15, 30, 40 og 90 %. */
+/** Batterimåler (stående batteri) med merker på 15, 30, 40 og 80 %. */
 const SVG = 'http://www.w3.org/2000/svg';
 
 export class Gauge {
@@ -23,7 +23,7 @@ export class Gauge {
     mk('rect', { x: 28, y: 10, width: 24, height: 10, rx: 3, fill: 'var(--granitt)' });
     mk('rect', { x: 10, y: this.topp, width: 60, height: this.hoyde, rx: 10, fill: '#fff', stroke: 'var(--granitt)', 'stroke-width': 3 });
     this.fyll = mk('rect', { x: 16, y: this.topp + 6, width: 48, height: 0, rx: 6, fill: 'var(--batteri)' }) as SVGRectElement;
-    const merker: [number, string, string][] = [[90, 'var(--batteri)', '90'], [40, '#7cc39a', '40'], [30, 'var(--sol)', '30'], [15, 'var(--alarm)', '15']];
+    const merker: [number, string, string][] = [[80, 'var(--batteri)', '80'], [40, '#7cc39a', '40'], [30, 'var(--sol)', '30'], [15, 'var(--alarm)', '15']];
     for (const [p, farge, tekst] of merker) {
       const y = this.y(p);
       mk('line', { x1: 72, y1: y, x2: 86, y2: y, stroke: farge, 'stroke-width': 3, 'stroke-linecap': 'round' });

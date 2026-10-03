@@ -34,7 +34,7 @@
         <div class="hero-tekst">
           <p class="overline">Forslag: nytt off-grid anlegg med generator-autostart</p>
           <h1 id="hero-tittel">Strøm på hytta som bare fungerer, også når ingen er der.</h1>
-          <p class="lead">2 kWp solceller, et litiumbatteri på ca. 8,4 kWh, en kombinert vekselretter og lader, og et dieselaggregat på 5–6 kVA i eget skur 30 m unna. En Siemens LOGO! 9 starter og stopper aggregatet etter batterinivå, forvarmer i kulde, kobler fra ikke-vitale laster og varsler over 5G.</p>
+          <p class="lead">2 kWp solceller, et litiumbatteri på ca. 8,4 kWh, en kombinert vekselretter og lader, og et dieselaggregat på 5–6 kVA i eget skur 30 m unna. En Siemens LOGO! 9 starter og stopper aggregatet etter batterinivå, lader opp om kvelden så det aldri går om natten, forvarmer i kulde, kobler fra ikke-vitale laster og varsler over 5G.</p>
           <div class="cta">
             <a class="knapp primær" href="#simulering">Prøv simuleringen</a>
             <a class="knapp sekundær" href="#utstyr">Se utstyret</a>
@@ -127,7 +127,7 @@
             <li><strong>Sol til batteri.</strong> Panelene lader batteriet gjennom en <button type="button" class="term" data-tip="Maximum Power Point Tracking: laderegulatoren finner hele tiden spenningen der panelene gir mest effekt.">MPPT</button>-regulator. Med 2 kWp dekker sola et snittdøgn fra april til september; regnearket sier at ca. 1,5 kWp holder for et snittdøgn i september.</li>
             <li><strong>Batteri til hytta.</strong> Batteriet forsyner en kombinert vekselretter og lader, dimensjonert for 3,3 kW kontinuerlig og ca. 9,3 kW topp. Toppen dekker motorstart på vedkløyveren (2,2 kW × 3) oppå de faste lastene, med 25 % margin.</li>
             <li><strong>Aggregat til batteri.</strong> Aggregatet står i skuret og mater AC-inngangen på laderen gjennom 3G6 over 30 m. Laderen gir ca. 2,5 kW DC inn på batteriet, altså 0,3 C. Aggregatet har sitt eget autostart-kort; PLS-en sender bare «kjør» og leser «kjører» og «feil» tilbake.</li>
-            <li><strong>PLS-en bestemmer.</strong> LOGO! 9 leser batterinivået fra batterimonitoren over Modbus TCP, og temperatur i skuret. Den eier start, stopp, forvarming, lastfrakobling og alarmer, uavhengig av alt annet.</li>
+            <li><strong>PLS-en bestemmer.</strong> LOGO! 9 leser batterinivået fra batterimonitoren over Modbus TCP, og temperatur i skuret. Den eier start, stopp, forvarming, lastfrakobling og alarmer, uavhengig av alt annet. Aggregatet lader til 80 %, og fra 22:00 til 07:00 står det alltid stille.</li>
             <li><strong>Pi og 5G-ruter varsler.</strong> En Raspberry Pi sender status og alarmer hjem over en 5G-ruter, og gir PLS-en et jevnlig livstegn. Faller Pi-en ut, fortsetter PLS-en som før og melder datafeil lokalt.</li>
           </ol>
         </div>
@@ -196,25 +196,39 @@
     <section id="logikk" class="seksjon alt" aria-labelledby="logikk-tittel">
       <div class="wrap">
         <p class="overline">Styringslogikk</p>
-        <h2 id="logikk-tittel">Reglene i PLS-en, modul 1–10</h2>
+        <h2 id="logikk-tittel">Reglene i PLS-en, modul 1–11</h2>
         <p class="lead">Terskler og tider er startverdier som justeres ved igangkjøring. Kjør-signalet Q1 er en reset-dominant lås: stopp vinner alltid over start.</p>
         <div class="tabell-rull">
           <table class="tabell logikk">
             <thead><tr><th>Modul</th><th>Regel</th></tr></thead>
             <tbody>
               <tr><td>1 Klar</td><td>KLAR = nødstopp OK og CO/røyk OK og drivstoff OK og ingen aggregatfeil og bryter i auto.</td></tr>
-              <tr><td>2 Batterinivå</td><td>Lavt under 30 %, normalt igjen over 90 % (hysterese). Lavt i 5 min gir startønske.</td></tr>
+              <tr><td>2 Batterinivå</td><td>Lavt under 30 %, normalt igjen over 80 % (hysterese). Lavt i 5 min gir startønske.</td></tr>
               <tr><td>3 Forvarming</td><td>Under 5 °C (hysterese 5/8 °C) slås hjelpestrøm i skuret (Q3) på ved startønske, og start kommer først etter 20 min. Q3 står også på mens aggregatet går.</td></tr>
               <tr><td>4 Kjør (Q1)</td><td>Settes ved startønske (etter eventuell forvarming), KLAR og ikke hvile. Nullstilles ved stopp eller når KLAR faller.</td></tr>
-              <tr><td>5 Stopp</td><td>Over 90 % og aggregatet har gått minst 30 min, eller maks gangtid 6 t.</td></tr>
+              <tr><td>5 Stopp</td><td>Over 80 % og aggregatet har gått minst 30 min, eller maks gangtid 6 t. Aggregatet lader aldri over 80 %; resten tar sola dagen etter.</td></tr>
               <tr><td>6 Hvile</td><td>10 min etter stopp før ny start er tillatt.</td></tr>
               <tr><td>7 Alarmer</td><td>Startfeil: kjør uten «kjører» i 90 s. Ukommandert: «kjører» uten kjør i 30 s. I tillegg aggregatfeil, nødstopp, CO/røyk, drivstoff, BMS og datafeil. Lagres til kvittering.</td></tr>
               <tr><td>8 Lastfrakobling</td><td>Under 15 % kobles ikke-vitale laster fra, over 40 % inn igjen. Alltid inne mens aggregatet går.</td></tr>
               <tr><td>9 Datavakt</td><td>Uteblir livstegnet fra Pi-en i 60 s, gir det datafeil.</td></tr>
               <tr><td>10 Testkjøring</td><td>Én gang i måneden 30 min, bare når batteriet er under 70 % og KLAR.</td></tr>
+              <tr><td>11 Natt og kveld</td><td>Nattstopp 22:00–07:00: ingen start, ingen forvarming, og et aggregat som går, stoppes kl. 22. Kveldslading: er batteriet under 40 % i 5 min mellom 17:00 og 20:00, lades det til 80 % før natta. Grensen er beregnet fra nattbehovet, se under.</td></tr>
             </tbody>
           </table>
         </div>
+        <h3 class="under">Hvor mye strøm trengs gjennom natta?</h3>
+        <p>Beregnet med lastmodellen fra kl. 20:00, når siste kveldslading kan starte, til 07:00, når nattstoppen er over. Tallene er energi tatt fra batteriet, etter vekselretterens tap.</p>
+        <div class="tabell-rull">
+          <table class="tabell">
+            <thead><tr><th>Personer</th><th>Fra batteriet</th><th>Andel av 8,4 kWh</th><th>Med 25 % margin</th></tr></thead>
+            <tbody>
+              <tr><td>6</td><td>1,43 kWh</td><td>17 %</td><td>21 %</td></tr>
+              <tr><td>2</td><td>1,30 kWh</td><td>15 %</td><td>19 %</td></tr>
+              <tr><td>0 (bare standby)</td><td>0,59 kWh</td><td>7 %</td><td>9 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>De største postene er standby (ca. 0,53 kWh over natta) og lysene fram til 23:30. Etter midnatt går bare standby og kjøleskapet. Batteriet skal ha minst 15 % igjen kl. 07, så ingenting kobles fra. Da må det være på ca. 15 + 21 = 36 % kl. 20 med seks personer. Kveldsgrensen er satt til 40 %. Med færre folk blir marginen større.</p>
         <p class="liten">Simuleringen evaluerer reglene én gang i sekundet; den ekte PLS-en skanner mye oftere. Autostart-kortet svarer på kjør-signalet med ett skanns forsinkelse, og det er tatt med i simuleringen.</p>
       </div>
     </section>
@@ -224,7 +238,7 @@
       <div class="wrap">
         <p class="overline">Prøv selv</p>
         <h2 id="sim-tittel">Simuleringen</h2>
-        <p class="lead">Et døgn eller en uke på hytta, sekund for sekund. Styringen her er en direkte port av referansesimuleringen av FBD-logikken (modul 1–10), og de 11 testscenarioene derfra kjører som automatiske tester mot denne koden. Energimodellen bygger på regnearket: soldata for Kragerø, lastlisten og batteri- og generatortallene.</p>
+        <p class="lead">Et døgn eller en uke på hytta, sekund for sekund. Styringen her er en direkte port av referansesimuleringen av FBD-logikken (modul 1–11), og de 13 testscenarioene derfra kjører som automatiske tester mot denne koden. Energimodellen bygger på regnearket: soldata for Kragerø, lastlisten og batteri- og generatortallene.</p>
         <div id="sim-app" class="sim-app">
           <div class="sim-scenarioer" id="sim-scenarioer">
             <h3>Velg et scenario</h3>
@@ -259,9 +273,9 @@
                   <div class="stor" id="batteri-prosent">–</div>
                   <div class="liten" id="batteri-kwh">–</div>
                   <ul class="terskler">
-                    <li><span class="merke m90"></span>Over 90 %: generatoren stopper</li>
-                    <li><span class="merke m40"></span>Over 40 %: alle laster på igjen</li>
-                    <li><span class="merke m30"></span>Under 30 % i 5 min: generatoren starter</li>
+                    <li><span class="merke m90"></span>Over 80 %: generatoren stopper</li>
+                    <li><span class="merke m40"></span>Under 40 % kl. 17–20: lader før natta. Over 40 %: alle laster på igjen</li>
+                    <li><span class="merke m30"></span>Under 30 % i 5 min: generatoren starter (ikke 22–07)</li>
                     <li><span class="merke m15"></span>Under 15 %: pumpe, ladere og verktøy kobles fra</li>
                   </ul>
                 </div>
@@ -439,7 +453,7 @@
         <ul class="punkter">
           <li><strong>Etterkjøling på autostart-kortet må være under 30 s.</strong> Mange kort lar motoren gå videre en stund etter at kjør-signalet faller. Med 60 s etterkjøling ser PLS-en «kjører» uten kjør i over 30 s og gir falsk alarm for ukommandert gange. Med 5 s skjer det ikke. Dette må sjekkes når kortet velges, eller alarmtiden justeres.</li>
           <li><strong>Forvarmingen virker på startønsket, ikke på temperaturen alene.</strong> Hjelpestrømmen slås bare på når aggregatet faktisk trengs, så skuret varmes ikke unødvendig.</li>
-          <li><strong>Maks gangtid er en sikring, ikke normal drift.</strong> Med 2,5 kW lading tar det ca. 2 timer fra 30 til 90 %, godt under 6 t.</li>
+          <li><strong>Maks gangtid er en sikring, ikke normal drift.</strong> Med 2,5 kW lading tar det ca. 1 t 45 min fra 30 til 80 %, godt under 6 t.</li>
         </ul>
         <h3>Ikke avklart ennå</h3>
         <ul class="punkter">
@@ -490,8 +504,8 @@
             <h3>Gjort</h3>
             <ul class="sjekk">
               <li>Dimensjonering i regneark: last, batteri, vekselretter, sol, aggregat og drivstoff.</li>
-              <li>Logikkspesifikasjon for modul 1–10.</li>
-              <li>Referansesimulering i Python med 11 scenarioer, portet til denne siden med de samme scenarioene som tester.</li>
+              <li>Logikkspesifikasjon for modul 1–11, med nattstopp og kveldslading.</li>
+              <li>Referansesimulering i Python med 13 scenarioer, portet til denne siden med de samme scenarioene som tester.</li>
               <li>I/O-plan lagt inn i LOGO!Soft Comfort.</li>
               <li>Nettverksvisningen delvis satt opp.</li>
             </ul>
@@ -501,7 +515,7 @@
             <ol class="neste-liste">
               <li>Velge aggregat og få manual og koblingsskjema for autostart-kortet.</li>
               <li>Velge batterimonitor og finne registerkartet, koble batterinivået inn og bygge modul 2.</li>
-              <li>Bygge og simulere FBD modul for modul: klar, terskler, forvarming, Q1-lås, stopp og hvile, alarmer, lastfrakobling, datavakt, testkjøring.</li>
+              <li>Bygge og simulere FBD modul for modul: klar, terskler, forvarming, Q1-lås, stopp og hvile, alarmer, lastfrakobling, datavakt, testkjøring, natt og kveld.</li>
               <li>Verifisere de åpne punktene under mot LOGO! 9-manualen.</li>
               <li>Måle 5G-dekning, velge ruter, sette opp Pi, VPN og livstegn.</li>
               <li>Elektriker for skur, kabling, jording og overspenningsvern. Avklare forsikring.</li>
@@ -516,6 +530,7 @@
             <li>Om nettverks-analoginnganger og UDF finnes i V9, og hva menyene heter.</li>
             <li>Om utvidelsesmoduler som AM4 passer til LOGO! 9.</li>
             <li>Retningen på Analog threshold trigger, og om Yearly timer har månedsmodus. Begge testes i simulering.</li>
+            <li>Modul 11 bruker klokka i LOGO!-en (Weekly timer). Klokka må holdes riktig, også etter strømbrudd og ved sommertid.</li>
             <li>Demoversjonen av Soft Comfort V9 kan ha sperret overføring til enheten (én kilde).</li>
           </ul>
         </div>
@@ -540,7 +555,7 @@
             <dt>NC / NO</dt><dd>Normalt lukket / normalt åpen kontakt.</dd>
             <dt>On-delay / Off-delay</dt><dd>Tidsforsinkelse på innkobling / utkobling av et signal.</dd>
             <dt>Reset-dominant lås</dt><dd>Lås der stopp vinner hvis start og stopp kommer samtidig.</dd>
-            <dt>Hysterese</dt><dd>Ulik terskel for av og på, for eksempel 30 % og 90 %, så signalet ikke flagrer.</dd>
+            <dt>Hysterese</dt><dd>Ulik terskel for av og på, for eksempel 30 % og 80 %, så signalet ikke flagrer.</dd>
             <dt>Modbus TCP / RTU</dt><dd>Industriprotokoll over nettverk / over RS485.</dd>
             <dt>MQTT</dt><dd>Lett meldingsprotokoll for status og varsler.</dd>
             <dt>CGNAT</dt><dd>Mobiloperatøren deler én offentlig adresse på mange kunder, så hytta kan ikke nås direkte utenfra.</dd>
@@ -553,7 +568,7 @@
           <details><summary>Hvorfor ikke mer sol og batteri i stedet for aggregat?</summary><p>Et fullt batteri dekker ca. 75 % av en helg helt uten sol. Å dekke resten uten aggregat krever et vesentlig større batteri som sjelden blir brukt fullt ut. Aggregatet tar de få grå periodene i stedet.</p></details>
           <details><summary>Hvor mye går aggregatet?</summary><p>Fra april til september er det beregnet at sola dekker et snittdøgn. Aggregatet starter på grå helger med folk og i grå perioder i oktober, typisk 2 timer per gang og ca. 1,1 liter diesel i timen.</p></details>
           <details><summary>Hva om 5G-dekningen er dårlig?</summary><p>Styring, generatorstart og vern er lokalt og påvirkes ikke. Bare varsling og fjerntilgang faller ut. Dekningen måles før ruter velges, eventuelt med utendørs antenne.</p></details>
-          <details><summary>Hvor mye støy blir det?</summary><p>Aggregatet står i eget skur 30 m unna, med lyddempet kappe. 1500 o/min vannkjølt er tydelig roligere enn 3000 o/min luftkjølt. Faktisk nivå er ukjent til modell er valgt.</p></details>
+          <details><summary>Hvor mye støy blir det?</summary><p>Aggregatet går aldri mellom 22:00 og 07:00. Er batteriet under 40 % om kvelden, lader det opp før kl. 22 i stedet. Det står i eget skur 30 m unna, med lyddempet kappe. 1500 o/min vannkjølt er tydelig roligere enn 3000 o/min luftkjølt. Faktisk nivå er ukjent til modell er valgt.</p></details>
           <details><summary>Kan anlegget bygges ut?</summary><p>Mer sol og batteri kobles på DC-siden. På PLS-en er I8 ledig, men alle fire reléutgangene er i bruk, så flere utganger krever en utvidelsesmodul.</p></details>
           <details><summary>Hvor sikre er tallene?</summary><p>Alle tall er beregnet fra antatt forbruk og soldata for Kragerø, ikke målt. Forbruket har 25 % margin, og aggregatet tar avvikene.</p></details>
         </div>

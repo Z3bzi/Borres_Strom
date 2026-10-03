@@ -1,14 +1,26 @@
 /**
- * Styringslogikk, modul 1–10. Dette er en direkte port av `kilder/logo_sim.py`
+ * Styringslogikk, modul 1–11. Dette er en direkte port av `kilder/logo_sim.py`
  * (referansesimuleringen) til TypeScript, med samme semantikk:
  *  - samme terskler og tider (1 steg = 1 sekund)
  *  - samme rekkefølge på evalueringen
  *  - reset-dominant lagring av «kjør»-signalet (Q1)
  *  - generatorkontrolleren svarer på Q1 fra forrige steg (ett skanns forsinkelse)
  *
+ * Modul 11 (nattstopp 22–07 og kveldslading 17–20 under 40 %) er bare aktiv når klokkeslettet
+ * gis inn; uten klokke er logikken modul 1–10 (som logo_sim.py uten tid0).
+ *
  * Signalnavn (I1–I7, Q1–Q4) beholdes her i koden for sporbarhet mot
  * overleveringsdokumentet, men vises aldri på nettsiden.
  */
+
+/** Batteriet lades til hit med aggregatet (global regel, 3. oktober 2026: 80 % i stedet for 90 %) */
+export const LADES_TIL = 80;
+/**
+ * Modul 11: kveldslading starter under denne grensen kl. 17–20. Beregnet fra nattbehovet:
+ * en natt (20–07) med 6 personer trenger ca. 21 % med 25 % margin, og batteriet skal ha minst
+ * 15 % igjen kl. 07 (ingen lastfrakobling). 15 + 21 ≈ 36, rundet opp til 40. Se tests/energy.test.ts.
+ */
+export const KVELD_GRENSE = 40;
 
 /** On-delay: sann når inngangen har vært sann i t steg. */
 export class On {
@@ -100,7 +112,13 @@ export interface Signals {
   klar: boolean;
   low: boolean;
   test: boolean;
+  /** Startønske før nattsperren (lavt i 5 min, testkjøring eller kveldslading) */
+  onskeRaa: boolean;
   onske: boolean;
+  /** Modul 11: nattstopp 22:00–07:00 */
+  natt: boolean;
+  /** Modul 11: kveldslading pågår (lås til over 80 % eller natt) */
+  kveldlading: boolean;
   kald: boolean;
   q3: boolean;
   forv: boolean;
@@ -119,7 +137,7 @@ export interface Signals {
   q2: boolean;
 }
 
-/** Selve styringen (modul 1–10). Batterinivå og temperatur kommer utenfra hvert steg. */
+/** Selve styringen (modul 1–11). Batterinivå, temperatur og klokke kommer utenfra hvert steg. */
 export class Controller {
   i: Inputs = { I3: true, I4: true, I5: true, I6: true, I7: true, hb: true };
   q1 = false;
@@ -127,7 +145,7 @@ export class Controller {
   /** Gjenstående sekunder av testkjøring (Wiping relay) */
   wipe = 0;
 
-  low = new Trig(30, 90);
+  low = new Trig(30, LADES_TIL);
   d5 = new On(300);
   kald = new Trig(5, 8);
   d20 = new On(1200);
@@ -138,26 +156,39 @@ export class Controller {
   d30u = new On(30);
   hbd = new Off(60);
   shed = new Trig(15, 40);
+  /** Modul 11: kveldslading (RS-lås) og 5 min forsinkelse */
+  kvl = false;
+  d5k = new On(300);
 
   constructor(public amf: Amf = new Amf()) {}
 
-  step(soc: number, temp: number): Signals {
+  /** @param klokke sekunder etter midnatt; utelatt = modul 11 av (som logo_sim.py uten tid0) */
+  step(soc: number, temp: number, klokke?: number): Signals {
     const i = this.i;
     const [I1, I2] = this.amf.call(this.q1); // AMF svarer på Q1 fra forrige steg
     const klar = i.I3 && i.I6 && i.I5 && !I2 && i.I4; // 1
     const low = this.low.call(soc); // 2
     const test = this.wipe > 0 && soc < 70 && klar; // 10
     this.wipe = Math.max(0, this.wipe - 1);
-    const onske = this.d5.call(low) || test;
+    let natt = false; // 11
+    if (klokke !== undefined) {
+      const k = ((klokke % 86400) + 86400) % 86400;
+      natt = k >= 22 * 3600 || k < 7 * 3600; // nattstopp 22–07
+      const kvset = this.d5k.call(k >= 17 * 3600 && k < 20 * 3600 && soc < KVELD_GRENSE); // kveld 17–20
+      if (soc > LADES_TIL || natt) this.kvl = false; // reset-dominant
+      else if (kvset) this.kvl = true;
+    }
+    const onskeRaa = this.d5.call(low) || test || this.kvl;
+    const onske = onskeRaa && !natt;
     const kald = this.kald.call(temp); // 3
     const q3 = (onske && kald) || I1;
     const forv = this.d20.call(q3);
     const kjor = onske && (!kald || forv);
     const d30 = this.d30.call(I1); // 5
     const d6h = this.d6h.call(this.q1);
-    const stopp = (!low && d30) || d6h;
+    const stopp = (!low && !this.kvl && d30) || d6h;
     const hvile = this.hvile.call(this.q1); // 6
-    if (stopp || !klar) this.q1 = false; // 4 (reset-dominant)
+    if (stopp || !klar || natt) this.q1 = false; // 4 (reset-dominant)
     else if (kjor && !hvile) this.q1 = true;
     const startfeil = this.d90.call(this.q1 && !I1); // 7
     const ukom = this.d30u.call(I1 && !this.q1);
@@ -167,7 +198,7 @@ export class Controller {
     const shed = this.shed.call(soc); // 8
     const q2 = !shed || I1;
     return {
-      I1, I2, klar, low, test, onske, kald, q3, forv, kjor, d30, d6h, stopp, hvile,
+      I1, I2, klar, low, test, onskeRaa, onske, natt, kveldlading: this.kvl, kald, q3, forv, kjor, d30, d6h, stopp, hvile,
       q1: this.q1, startfeil, ukom, dataok, now, alarm: this.alarm, shed, q2,
     };
   }
@@ -189,6 +220,8 @@ export class Sim {
   t = 0;
   log: LogEntry[] = [];
   last: Record<string, boolean> = {};
+  /** Klokkeslett (s etter midnatt) ved t=0; null = modul 11 av */
+  tid0: number | null = null;
 
   constructor(
     public soc = 80,
@@ -208,7 +241,7 @@ export class Sim {
   get amf(): Amf { return this.ctl.amf; }
 
   step(): Signals {
-    const s = this.ctl.step(this.soc, this.temp);
+    const s = this.ctl.step(this.soc, this.temp, this.tid0 === null ? undefined : this.tid0 + this.t);
     this.soc = Math.min(100, Math.max(0, this.soc + ((s.I1 ? this.charge : -0.115) / this.cap) * 100 / 3600));
     const vals: Record<string, boolean> = { Q1: s.q1, Q2: s.q2, Q3: s.q3, Q4: s.alarm, I1: s.I1 };
     for (const [k, v] of Object.entries(vals)) {

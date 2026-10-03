@@ -2,7 +2,7 @@ import './styles.css';
 import { FlowDiagram } from './ui/flow';
 import { SimApp } from './ui/simapp';
 import { Telefon } from './ui/phone';
-import { tegnAarsdiagram, tegnVintertabell } from './ui/year';
+import { tegnAarsdiagram } from './ui/year';
 import { startOmvisning } from './ui/tour';
 
 const redusert = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -63,8 +63,8 @@ function flowDemo(): void {
   const faser = [
     { solW: 1400, forbrukW: 180, generatorW: 0, batteriW: 1200, niva: 70, tekst: 'Midt på dagen: sola lader batteriet og forsyner hytta samtidig.' },
     { solW: 0, forbrukW: 350, generatorW: 0, batteriW: -390, niva: 55, tekst: 'Kvelden: lys, ladere og kjøleskap går på batteriet.' },
-    { solW: 0, forbrukW: 115, generatorW: 0, batteriW: -128, niva: 28, tekst: 'Natta, batteriet under 30 % i 5 minutter: styringen starter generatoren.' },
-    { solW: 0, forbrukW: 115, generatorW: 2500, batteriW: 2370, niva: 60, tekst: 'Generatoren lader med ca. 2,5 kW til batteriet er over 90 %, og stopper så av seg selv.' },
+    { solW: 0, forbrukW: 48, generatorW: 0, batteriW: -53, niva: 28, tekst: 'Natta, batteriet under 30 % i 5 minutter: styringen starter generatoren.' },
+    { solW: 0, forbrukW: 48, generatorW: 2500, batteriW: 2450, niva: 60, tekst: 'Generatoren lader med ca. 2,5 kW til batteriet er over 90 %, og stopper så av seg selv.' },
   ];
   let i = 0;
   const vis = () => { const f = faser[i]!; flow.oppdater(f); tekst.textContent = f.tekst; };
@@ -96,7 +96,7 @@ function telefonDemo(): void {
   const el = document.getElementById('telefon-demo');
   if (!el) return;
   const t = new Telefon(el);
-  t.status({ niva: 84, solW: 920, forbrukW: 115, generator: 'Av', tempC: 12, tid: '13:42', frakoblet: false });
+  t.status({ niva: 84, solW: 920, forbrukW: 48, generator: 'Av', tempC: 12, tid: '13:42', frakoblet: false });
   t.varsler([
     { t: 0, tid: '07:12', tittel: 'Generatoren startet', tekst: 'Automatisk start, batteriet er på 29 %.', alvor: 'info' },
     { t: 1, tid: '09:31', tittel: 'Generatoren stoppet', tekst: 'Batteriet er over 90 % og generatoren har gått i over 30 minutter.', alvor: 'info' },
@@ -120,5 +120,4 @@ flowDemo();
 telefonDemo();
 new SimApp();
 tegnAarsdiagram(document.getElementById('aarsdiagram')!, document.getElementById('aarsnotat')!);
-tegnVintertabell(document.getElementById('vintertabell')!, document.getElementById('vinternotat')!);
 omvisning();

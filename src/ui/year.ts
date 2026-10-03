@@ -1,6 +1,6 @@
-/** Årsoversikt: liggende stolper per måned (produksjon vs. forbruk) og vintertabell. */
-import { MANEDER, PV_KWP, manedsBalanse, vinterLosninger } from '../sim/data';
-import { kWh, liter, tall } from '../sim/format';
+/** Årsoversikt: liggende stolper per måned (produksjon vs. forbruk). */
+import { MANEDER, PV_KWP, manedsBalanse } from '../sim/data';
+import { kWh, tall } from '../sim/format';
 
 const SVG = 'http://www.w3.org/2000/svg';
 
@@ -47,7 +47,9 @@ export function tegnAarsdiagram(container: HTMLElement, notat: HTMLElement): voi
     mk('text', { x: venstre + wP + 5, y: y + 4 + stolpeH - 3, class: 'v' }, `${tall(r.produksjonKWh)}${r.interpolert ? ' (anslått)' : ''}`);
     mk('rect', { x: venstre, y: y + 6 + stolpeH, width: wF, height: stolpeH, rx: 3, fill: 'var(--forbruk)' });
     mk('text', { x: venstre + wF + 5, y: y + 6 + 2 * stolpeH - 3, class: 'v' }, `${tall(r.forbrukKWh)}`);
-    if (r.dagerMedFolk > 0) {
+    if (r.avslaatt) {
+      mk('text', { x: venstre - 8, y: y + radH / 2 + 14, 'text-anchor': 'end', class: 'note' }, 'avslått');
+    } else if (r.dagerMedFolk > 0) {
       mk('text', { x: venstre - 8, y: y + radH / 2 + 14, 'text-anchor': 'end', class: 'note' }, `${r.dagerMedFolk} d. folk`);
     }
   });
@@ -55,20 +57,7 @@ export function tegnAarsdiagram(container: HTMLElement, notat: HTMLElement): voi
   container.replaceChildren(svg);
   const sumP = rader.reduce((s, r) => s + r.produksjonKWh, 0);
   const sumF = rader.reduce((s, r) => s + r.forbrukKWh, 0);
-  const dekker = rader.filter((r) => !r.interpolert && r.produksjonKWh >= r.forbrukKWh).map((r) => MANEDER[r.maned]);
-  notat.textContent = `Tall i kWh per måned, beregnet med ${tall(PV_KWP)} kWp solceller og soldata fra solkart.no. Sola dekker hele forbruket fra ${dekker[0]} til ${dekker[dekker.length - 1]}, og trolig også i mars og oktober. Disse to månedene mangler i kilden og er anslått (skravert), med hytta antatt lukket. Over året: sol ${kWh(sumP, 0)}, forbruk ${kWh(sumF, 0)}. Om vinteren dekker generatoren differansen.`;
-}
-
-export function tegnVintertabell(container: HTMLElement, notat: HTMLElement): void {
-  const rader = vinterLosninger(PV_KWP);
-  const t = document.createElement('table');
-  t.className = 'vinter';
-  t.innerHTML = `<caption class="liten">Overvåking om vinteren (november til februar), beregnet</caption>
-    <thead><tr><th>Løsning</th><th class="tallcelle">Effekt</th><th class="tallcelle">Forbruk</th><th class="tallcelle">Underskudd</th><th class="tallcelle">Diesel</th></tr></thead>
-    <tbody>${rader.map((r, i) => `<tr class="${i === 0 ? 'valgt' : ''}"><td>${r.navn}</td><td class="tallcelle">${tall(r.effektW)} W</td><td class="tallcelle">${kWh(r.forbrukKWh, 0)}</td><td class="tallcelle">${kWh(r.underskuddKWh, 0)}</td><td class="tallcelle"><strong>${r.liter > 0 ? 'ca. ' + liter(r.liter, 0) : '0 l'}</strong></td></tr>`).join('')}</tbody>`;
-  const rull = document.createElement('div');
-  rull.className = 'tabell-rull';
-  rull.append(t);
-  container.replaceChildren(rull);
-  notat.textContent = `Tallene gjelder november til februar og er beregnet fra regnearket med ${tall(PV_KWP)} kWp solceller. Sola gir i den perioden ca. ${kWh(rader[0]!.produksjonKWh, 0)}. Underskuddet er summert over perioden, så i praksis må batteriet også tåle at panelene kan være snødekte i perioder. Effektene er antakelser som må sjekkes mot databladene.`;
+  const paa = rader.filter((r) => !r.avslaatt);
+  const dekker = paa.filter((r) => !r.interpolert && r.produksjonKWh >= r.forbrukKWh).map((r) => MANEDER[r.maned]);
+  notat.textContent = `Tall i kWh per måned, beregnet med ${tall(PV_KWP)} kWp solceller og soldata fra solkart.no. Sola dekker hele forbruket fra ${dekker[0]} til ${dekker[dekker.length - 1]}, og trolig også i oktober. Mars og oktober mangler i kilden og er anslått (skravert). Fra november til mars er anlegget avslått, så sola der blir ikke brukt. Over året: sol ${kWh(sumP, 0)}, forbruk ${kWh(sumF, 0)}.`;
 }

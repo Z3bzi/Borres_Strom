@@ -256,17 +256,6 @@ button { font: inherit; }
 .aarsdiagram .v { font-size: 12px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
 .aarsdiagram .forkl { font-size: 13px; fill: var(--ink); font-weight: 650; }
 .aarsdiagram .note { font-size: 11px; fill: var(--ink-2); }
-table.vinter { width: 100%; border-collapse: collapse; background: var(--kort); border-radius: var(--radius); overflow: hidden; box-shadow: var(--skygge); font-size: 0.95rem; margin: 12px 0; }
-table.vinter th, table.vinter td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--linje); vertical-align: top; }
-table.vinter th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
-table.vinter td.tallcelle, table.vinter th.tallcelle { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-table.vinter tr.valgt td { background: var(--sol-lys); }
-@media (max-width: 560px) {
-  table.vinter { font-size: 0.85rem; }
-  table.vinter th, table.vinter td { padding: 8px 6px; }
-  table.vinter th:nth-child(3), table.vinter td:nth-child(3) { display: none; }
-}
-.tabell-rull { overflow-x: auto; }
 
 /* Gjennomtenkt, ordliste */
 .to-kolonner { display: grid; gap: 20px; }

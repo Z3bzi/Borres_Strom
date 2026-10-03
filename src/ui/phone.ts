@@ -21,7 +21,7 @@ export class Telefon {
 
   constructor(container: HTMLElement, private tittel = 'Børresholmen') {
     container.innerHTML = `<div class="skjerm">
-      <div class="status-topp"><span class="klokke-lite">–</span><span>Starlink ▲</span></div>
+      <div class="status-topp"><span class="klokke-lite">–</span><span>5G ▲</span></div>
       <div class="app-tittel">${this.tittel}</div>
       <div class="status-grid"></div>
       <div class="varsler"></div>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { daglengde, soldag, klarProduksjonW, Skyer, produksjonW } from '../src/sim/solar';
 import { dogEnergiWh, last } from '../src/sim/load';
-import { DAGSFORBRUK_WH, FORBRUK_DC_PER_DOGN, manedsBalanse, vinterLosninger, PV_KWP, produksjonPerDogn } from '../src/sim/data';
+import { DAGSFORBRUK_WH, FORBRUK_DC_PER_DOGN, STANDBY_W, manedsBalanse, PV_KWP, produksjonPerDogn } from '../src/sim/data';
 import { Hytte } from '../src/sim/cabin';
 import { SCENARIOER } from '../src/sim/scenarios';
 import { temperatur } from '../src/sim/temperature';
@@ -41,15 +41,17 @@ describe('solmodell', () => {
 });
 
 describe('forbruksmodell', () => {
-  it('et døgn med 6 personer summerer til arkets 4 825 Wh (ca. 4,8 kWh)', () => {
-    expect(DAGSFORBRUK_WH).toBe(4825);
+  it('et døgn med 6 personer summerer til lastlisten: arkets 4 825 Wh med Starlink byttet mot 5G-ruter (ca. 3,2 kWh)', () => {
+    // Arket: Starlink 70 W + ruter 12 W i 24 t = 1 968 Wh. 5G-ruter 15 W i 24 t = 360 Wh.
+    expect(DAGSFORBRUK_WH).toBe(4825 - 1968 + 360);
     // Startstrømmene (kjøleskap, pumpe, verktøy) gir noen få Wh ekstra
-    expect(Math.abs(dogEnergiWh(6) - 4825)).toBeLessThan(25);
+    expect(Math.abs(dogEnergiWh(6) - DAGSFORBRUK_WH)).toBeLessThan(25);
   });
 
-  it('uten folk går bare standby på 115 W', () => {
-    expect(dogEnergiWh(0)).toBeCloseTo(115 * 24, 0);
-    expect(last(12 * 3600, 0, false, false).totalW).toBe(115);
+  it('uten folk går bare standby på 48 W', () => {
+    expect(STANDBY_W).toBe(48);
+    expect(dogEnergiWh(0)).toBeCloseTo(48 * 24, 0);
+    expect(last(12 * 3600, 0, false, false).totalW).toBe(48);
   });
 
   it('frakobling tar bort ikke-vitale laster men ikke lys og kjøleskap', () => {
@@ -57,31 +59,29 @@ describe('forbruksmodell', () => {
     const med = last(t, 6, false, false), uten = last(t, 6, false, true);
     expect(uten.ikkeVitalW).toBe(0);
     expect(uten.vitalW).toBe(med.vitalW);
-    expect(med.vitalW).toBe(115 + 60 + 96);
+    expect(med.vitalW).toBe(STANDBY_W + 60 + 96);
   });
 });
 
 describe('energibalanse (regneark)', () => {
   it('juli med folk har solsoverskudd, desember har underskudd', () => {
     expect(produksjonPerDogn(6)).toBeGreaterThan(FORBRUK_DC_PER_DOGN);
-    expect(produksjonPerDogn(11)).toBeLessThan(115 * 24 / 1000);
+    expect(produksjonPerDogn(11)).toBeLessThan(FORBRUK_DC_PER_DOGN);
   });
 
-  it('månedsbalanse stemmer med arket Bruksmønster ved 2 kWp', () => {
+  it('månedsbalanse følger arket Bruksmønster ved 2 kWp, med 5G-ruter og anlegget avslått november–mars', () => {
     expect(PV_KWP).toBe(2);
     const b = manedsBalanse(2);
-    expect(b[0]!.forbrukKWh).toBeCloseTo(85.56, 1);
+    expect(b[0]!.forbrukKWh).toBe(0);
+    expect(b[0]!.avslaatt).toBe(true);
     expect(b[0]!.produksjonKWh).toBeCloseTo(19.44, 1);
+    expect(b[3]!.avslaatt).toBe(false);
+    // September: 8 dager med folk + 22 dager standby
+    expect(b[8]!.forbrukKWh).toBeCloseTo(8 * FORBRUK_DC_PER_DOGN + 22 * 48 * 24 / 1000, 6);
+    expect(b[6]!.produksjonKWh).toBeGreaterThan(b[6]!.forbrukKWh);
     expect(b[6]!.produksjonKWh).toBeCloseTo(285.12, 1);
-    expect(b[6]!.forbrukKWh).toBeCloseTo(207.74, 1);
   });
 
-  it('vinter med Starlink 24/7: ca. 204 kWh underskudd og ca. 90 l diesel ved 2 kWp', () => {
-    const v = vinterLosninger(2);
-    expect(v[0]!.underskuddKWh).toBeCloseTo(203.58, 1);
-    expect(v[0]!.liter).toBeCloseTo(90.48, 1);
-    expect(v[1]!.underskuddKWh).toBe(0);
-  });
 });
 
 describe('temperatur', () => {
@@ -103,7 +103,7 @@ describe('hele anlegget', () => {
     const h = kjor('sommer');
     expect(h.stats.starter).toBe(0);
     expect(h.stats.solKWh).toBeGreaterThan(h.stats.forbrukKWh);
-    expect(h.stats.forbrukKWh).toBeCloseTo(4.825, 1);
+    expect(h.stats.forbrukKWh).toBeCloseTo(DAGSFORBRUK_WH / 1000, 1);
   });
 
   it('overskyet helg i september: generatoren starter automatisk og stopper igjen', () => {
@@ -114,16 +114,16 @@ describe('hele anlegget', () => {
     expect(h.logg.some((l) => l.tekst.includes('over 90 %') && l.tekst.includes('stopper'))).toBe(true);
   });
 
-  it('kald vinterdag: forvarming 20 min før start', () => {
-    const h = kjor('vinter');
+  it('kald morgen i april: forvarming 20 min før start', () => {
+    const h = kjor('kald');
     expect(h.stats.forvarmetS).toBeGreaterThanOrEqual(1200);
     expect(h.stats.starter).toBeGreaterThanOrEqual(1);
     expect(h.logg.some((l) => l.tekst.includes('Forvarmingen er ferdig'))).toBe(true);
   });
 
-  it('tom hytte i desember: generatoren holder batteriet i live', () => {
-    const h = kjor('desember');
-    expect(h.stats.starter).toBeGreaterThanOrEqual(2);
+  it('tom hytte i oktober: generatoren holder batteriet i live', () => {
+    const h = kjor('tom');
+    expect(h.stats.starter).toBeGreaterThanOrEqual(1);
     expect(h.stats.minNiva).toBeGreaterThan(20);
     expect(h.stats.stromlosS).toBe(0);
   });

@@ -269,7 +269,7 @@ export class SimApp {
 
     const f = t.forbruk;
     $('#forbruk-naa').textContent = watt(f.totalW);
-    $('#forbruk-info').textContent = t.stromlos ? 'Uten strøm' : f.aktive.length ? `Standby + ${f.aktive.join(', ')}` : 'Bare standby (Starlink, ruter, styring)';
+    $('#forbruk-info').textContent = t.stromlos ? 'Uten strøm' : f.aktive.length ? `Standby + ${f.aktive.join(', ')}` : 'Bare standby (5G-ruter, styring, vekselretter)';
 
     const gk = $('#sim-generator');
     gk.classList.toggle('gaar', t.generator === 'gaar');

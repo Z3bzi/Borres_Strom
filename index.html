@@ -107,8 +107,8 @@
         </figure>
       </div>
       <div class="wrap nokkeltall" aria-label="Nøkkeltall, beregnet">
-        <div class="tall"><strong>4,8&nbsp;<button type="button" class="term" data-tip="Kilowattime, en mengde strøm. 1 kWh er det en liten panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta tent i ti timer, eller lader en mobil rundt 60 ganger.">kWh</button></strong><span>forbruk per døgn med folk på hytta</span></div>
-        <div class="tall"><strong>8,4&nbsp;kWh</strong><span>batteri, nok til et døgn uten sol</span></div>
+        <div class="tall"><strong>3,2&nbsp;<button type="button" class="term" data-tip="Kilowattime, en mengde strøm. 1 kWh er det en liten panelovn på 1 000 W bruker på én time. Det holder alle lysene på hytta tent i ti timer, eller lader en mobil rundt 60 ganger.">kWh</button></strong><span>forbruk per døgn med folk på hytta</span></div>
+        <div class="tall"><strong>8,4&nbsp;kWh</strong><span>batteri, nok til ca. halvannet døgn uten sol</span></div>
         <div class="tall"><strong>2&nbsp;<button type="button" class="term" data-tip="Kilowatt-peak: solcellenes merkeeffekt, altså hvor mye de gir i full sol. 2 kWp er omtrent fem store paneler.">kWp</button></strong><span>solceller, dekker alt fra april til september</span></div>
         <div class="tall"><strong>Automatisk</strong><span>generatorstart, forvarming og varsling</span></div>
       </div>
@@ -126,8 +126,8 @@
           <div class="rad" role="row"><span role="rowheader">Lading og lys</span><span role="cell">Går, så lenge det har vært sol.</span><span role="cell" class="ny">Går alltid. Blir batteriet lavt, starter generatoren selv.</span></div>
           <div class="rad" role="row"><span role="rowheader">Kjøleskap</span><span role="cell">[TODO Sebastian: har hytta kjøleskap i dag, og går det?]</span><span role="cell" class="ny">Står på hele tiden, også om natta og i grått vær.</span></div>
           <div class="rad" role="row"><span role="rowheader">Vann</span><span role="cell">Håndpumpe fra brønnen opp til loftstanken.</span><span role="cell" class="ny">Elektrisk pumpe. Fylles automatisk.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Verktøy og vedkløyver</span><span role="cell">Løs generator som må startes manuelt, og som er for svak til vedkløyveren.</span><span role="cell" class="ny">Vekselretteren tåler motorstart på vedkløyveren (beregnet toppeffekt ca. 9,4 kW). Går rett fra batteriet.</span></div>
-          <div class="rad" role="row"><span role="rowheader">Internett</span><span role="cell">Ingen.</span><span role="cell" class="ny">Starlink på hele tiden, til folk og til overvåking.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Verktøy og vedkløyver</span><span role="cell">Løs generator som må startes manuelt, og som er for svak til vedkløyveren.</span><span role="cell" class="ny">Vekselretteren tåler motorstart på vedkløyveren (beregnet toppeffekt ca. 9,3 kW). Går rett fra batteriet.</span></div>
+          <div class="rad" role="row"><span role="rowheader">Internett</span><span role="cell">Ingen.</span><span role="cell" class="ny">5G-ruter på hele tiden, til folk og til overvåking.</span></div>
           <div class="rad" role="row"><span role="rowheader">Grå helg i september</span><span role="cell">Strømmen tar slutt når batteriet er tomt.</span><span role="cell" class="ny">Generatoren starter av seg selv, lader batteriet og stopper igjen. Prøv scenarioet «Overskyet helg i september».</span></div>
           <div class="rad" role="row"><span role="rowheader">Når du kommer</span><span role="cell">Usikkert hvor mye strøm det er.</span><span role="cell" class="ny">Batteriet er holdt oppe mens hytta sto tom.</span></div>
           <div class="rad" role="row"><span role="rowheader">Når ingen er der</span><span role="cell">Ingen vet hvordan det står til.</span><span role="cell" class="ny">Status og alarmer på telefonen, hjemmefra.</span></div>
@@ -148,10 +148,10 @@
           </figure>
           <ol class="steg">
             <li><strong>Sola lader batteriet.</strong> Solcellene på taket (planlagt ca. 2 kWp) lader batteriet gjennom en <button type="button" class="term" data-tip="En boks mellom solcellene og batteriet som sørger for at batteriet lades riktig og ikke overlades.">laderegulator</button>. Fra april til september er det beregnet at sola dekker alt forbruket.</li>
-            <li><strong>Batteriet forsyner hytta.</strong> Et batteri på ca. 8,4 kWh holder et døgns forbruk med folk på hytta. En <button type="button" class="term" data-tip="Lager vanlig 230 V strøm av batteriets likestrøm, så alt vanlig utstyr kan brukes.">vekselretter</button> gjør batteristrømmen om til vanlig 230 V.</li>
+            <li><strong>Batteriet forsyner hytta.</strong> Et batteri på ca. 8,4 kWh holder i ca. halvannet døgn med folk på hytta, beregnet med 25 % margin. En <button type="button" class="term" data-tip="Lager vanlig 230 V strøm av batteriets likestrøm, så alt vanlig utstyr kan brukes.">vekselretter</button> gjør batteristrømmen om til vanlig 230 V.</li>
             <li><strong>Generatoren tar over når sola ikke strekker til.</strong> Er batteriet under 30 % i fem minutter, starter styringen dieselgeneratoren i skuret ca. 30 m unna. Den lader med ca. 2,5 kW og stopper når batteriet er over 90 %.</li>
             <li><strong>Styringen passer på.</strong> En liten, robust <button type="button" class="term" data-tip="En liten industriell styringsboks som leser av batterinivå, temperatur og sikkerhetssignaler, og som styrer generatoren etter faste regler. Samme type brukes i f.eks. ventilasjonsanlegg og pumpestasjoner.">styringsboks</button> leser batterinivå og temperatur, forvarmer generatoren når det er kaldt, kobler fra unødvendige laster hvis batteriet blir svært lavt, og sender alarm hvis noe er galt.</li>
-            <li><strong>Du ser alt hjemmefra.</strong> Starlink står på hele tiden, så batterinivå, generatorstatus og alarmer kommer til telefonen.</li>
+            <li><strong>Du ser alt hjemmefra.</strong> En <button type="button" class="term" data-tip="En ruter med SIM-kort som gir internett over mobilnettet, på samme måte som en mobiltelefon. Den gir også Wi-Fi på hytta.">5G-ruter</button> står på hele tiden, så batterinivå, generatorstatus og alarmer kommer til telefonen.</li>
           </ol>
         </div>
       </div>
@@ -326,7 +326,7 @@
             <ul>
               <li>Soltall per måned for Kragerø fra solkart.no (sør, 30° helning). Mars og oktober mangler i kilden og er anslått som snitt av nabomånedene. Dagslengden er regnet astronomisk for 58,9° nord. Dagens energi er fordelt som en klokkekurve over dagslyset.</li>
               <li>«Sol» gir 25 % mer enn månedssnittet, «delvis skyet» omtrent snittet med skyer som kommer og går, «overskyet» ca. 30 % av snittet. Skyene er tilfeldige, men like hver gang du kjører samme scenario.</li>
-              <li>Forbruket følger lastlisten i regnearket: 115 W standby hele døgnet (Starlink, ruter, styring, vekselretter), kjøleskap, lys om kvelden, ladere, vannpumpe i korte støt og 15 minutter vedkløyver og verktøy per dag med folk. Med seks personer blir det 4,8 kWh per døgn.</li>
+              <li>Forbruket følger lastlisten i regnearket: 48 W standby hele døgnet (5G-ruter, styring, vekselretter), kjøleskap, lys om kvelden, ladere, vannpumpe i korte støt og 15 minutter vedkløyver og verktøy per dag med folk. Med seks personer blir det 3,2 kWh per døgn. Regnearket regner med Starlink; her er Starlink byttet med en 5G-ruter på anslått 15 W.</li>
               <li>Batteri 8,4 kWh, lades med maks 2,5 kW. Vekselretteren taper 10 %. Under 10 % slår batteristyringen av strømmen for å beskytte batteriet.</li>
               <li>Generatoren lader med ca. 2,5 kW og bruker ca. 1,1 liter diesel i timen (2,5 kWh per liter).</li>
               <li>Temperaturen er en grov årskurve for Kragerø med døgnsvingning, bare brukt til å avgjøre forvarming.</li>
@@ -392,7 +392,7 @@
         <div>
           <p class="overline">Hjemmefra</p>
           <h2 id="overvaking-tittel">Fjernovervåking</h2>
-          <p class="lead">Starlink står på hele tiden. En liten server på hytta sender status til telefonen og varsler når noe trenger oppmerksomhet.</p>
+          <p class="lead">En 5G-ruter står på hele tiden i sesongen. En liten server på hytta sender status til telefonen over mobilnettet og varsler når noe trenger oppmerksomhet.</p>
           <ul class="punkter">
             <li><strong>Status når du vil:</strong> batterinivå, sol, forbruk, om generatoren går og temperaturen i skuret.</li>
             <li><strong>Varsel når det trengs:</strong> generatoren starter ikke, CO-alarm, nødstopp, lite diesel, svært lavt batteri eller mistet kontakt.</li>
@@ -410,17 +410,12 @@
       <div class="wrap">
         <p class="overline">Energibalanse</p>
         <h2 id="aaret-tittel">Hele året</h2>
-        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og Starlink på når hytta står tom i sesongen. Fra november til mars er hytta og hele anlegget avslått.</p>
+        <p class="lead">Beregnet solproduksjon mot forbruk, måned for måned, med det bruksmønsteret vi har i dag: helger om våren og høsten, folk der hele tiden fra midten av juni til midten av august, og overvåkingen på når hytta står tom i sesongen. Fra november til mars er hytta og hele anlegget avslått.</p>
         <div id="aarsdiagram" class="aarsdiagram"></div>
         <p class="liten" id="aarsnotat"></p>
         <h3>Vinteren: anlegget er avslått</h3>
-        <p>Fra november til mars er hytta stengt, og hele anlegget slås av: ingen Starlink, ingen standby, ingen generator og ingen diesel. Batteriet settes fullt i dvale, og i april skrus alt på igjen. Når ingen er der i sesongen, bruker Starlink, ruteren, styringen og vekselretteren til sammen ca. 115 W døgnet rundt, og det dekker sola stort sett.</p>
-        <details>
-          <summary>Hva om vi likevel ville hatt Starlink på om vinteren?</summary>
-          <p>Da hadde det vært for lite sol til å dekke 115 W døgnet rundt, og generatoren måtte gjort jobben. Tabellen viser hva det ville kostet i diesel, og hva mindre strømkrevende alternativer ville gitt.</p>
-          <div id="vintertabell"></div>
-          <p class="liten" id="vinternotat"></p>
-        </details>
+        <p>Fra november til mars er hytta stengt, og hele anlegget slås av: ingen ruter, ingen standby, ingen generator og ingen diesel. Batteriet settes fullt i dvale, og i april skrus alt på igjen.</p>
+        <p>Når ingen er der i sesongen, bruker 5G-ruteren, styringen og vekselretteren til sammen ca. 48 W døgnet rundt. Med Starlink ville det vært ca. 115 W, så valget av 5G-ruter mer enn halverer forbruket når hytta står tom.</p>
       </div>
     </section>
 
@@ -437,7 +432,7 @@
               <li>Reglene for styringen er skrevet ned punkt for punkt: start, stopp, forvarming, hvile, lastfrakobling, alarmer og testkjøring.</li>
               <li>Reglene er testet i en simulering med elleve scenarioer, og det er den samme logikken som kjører på denne siden.</li>
               <li>Alle inn- og utganger på styringen er planlagt, med sikkerhetssignalene koblet slik at brudd gir stopp.</li>
-              <li>Nettverket på hytta og forbindelsen hjem er planlagt.</li>
+              <li>Nettverket på hytta og forbindelsen hjem er planlagt, med 5G-ruter i stedet for Starlink.</li>
             </ul>
           </div>
           <div class="kort">
@@ -445,6 +440,7 @@
             <ul class="neste">
               <li>Velge generator med ferdig montert autostart-kort. Dieseldrevet, lyddempet kappe, elstart, gjerne vannkjølt 1500-omdreiningstype for mindre støy og lengre levetid.</li>
               <li>Velge batterimonitor og bekrefte noen tekniske detaljer på styringen mot håndboken.</li>
+              <li>Sjekke 5G-dekningen på holmen og velge ruter, eventuelt med utendørs antenne.</li>
               <li>Elektriker til skuret, kabling på 30 m, jording og overspenningsvern.</li>
               <li>Skur med ventilasjon, lyddemping, brann- og CO-sikring.</li>
               <li>Avklare med forsikringsselskapet at automatisk start uten tilsyn er i orden.</li>
@@ -470,7 +466,8 @@
             <dt>Batteristyring (BMS)</dt><dd>Elektronikken inne i batteriet som passer på at det ikke overlades, tømmes helt eller blir for varmt.</dd>
             <dt>Styringen</dt><dd>En liten industriell styringsboks som leser signaler og styrer generatoren etter faste regler.</dd>
             <dt>Autostart-kort</dt><dd>Generatorens egen kontroller. Styringen sier bare «kjør», og kortet gjør resten: starter motoren, melder «går» eller «feil».</dd>
-            <dt>Standby</dt><dd>Det hytta bruker når ingen er der: Starlink, ruter, styring og vekselretter, ca. 115 W til sammen.</dd>
+            <dt>5G-ruter</dt><dd>En ruter med SIM-kort som gir internett over mobilnettet, som en mobiltelefon. Gir Wi-Fi på hytta og sender status hjem.</dd>
+            <dt>Standby</dt><dd>Det hytta bruker når ingen er der: 5G-ruter, styring og vekselretter, ca. 48 W til sammen.</dd>
             <dt>Ikke-vitale laster</dt><dd>Vannpumpe, ladere og verktøy. Disse kobles fra hvis batteriet blir svært lavt, så lys, kjøleskap og overvåking varer lengst mulig.</dd>
             <dt>Fail-safe</dt><dd>Koblet slik at en feil (brudd, strømløs styring) gir «stopp», aldri «kjør».</dd>
           </dl>

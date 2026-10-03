@@ -1,6 +1,6 @@
 /**
  * Forbruksprofil time for time, bygd fra lastlisten (ark «Last»). Med 6 personer summerer
- * profilen til arkets 4 825 Wh per døgn. Uten folk går bare standby (115 W).
+ * profilen til lastlistens døgnsum (ca. 3,2 kWh med 5G-ruter). Uten folk går bare standby (48 W).
  * Når styringen kobler fra ikke-vitale laster, faller pumpe, ladere og verktøy bort.
  * Fordelingen over døgnet er en antakelse.
  */

@@ -54,6 +54,7 @@ Simuleringskjernen i `src/sim/` er ren TypeScript uten DOM, så den kan testes o
 ## Antakelser som er lagt inn i koden
 
 - Solcelleeffekt: 2 kWp, samme som regnearket (`PV_KWP` i `src/sim/data.ts`). Endres tallet der, regnes alle tall på siden om.
+- 5G-ruter med Wi-Fi på anslått 15 W i stedet for Starlink (70 W) og egen ruter (12 W), så standby er 48 W og dagsforbruket med folk ca. 3,2 kWh (`RUTER_5G_W` i `src/sim/data.ts`). Regnearket regner fortsatt med Starlink.
 - Ikke-vitale laster ved lastfrakobling: vannpumpe, ladere, nettbrett, verktøy og vedkløyver.
 - Hytta og anlegget er avslått fra november til mars (`ANLEGG_AV` i `src/sim/data.ts`): null forbruk, ingen generator.
 - Månedlig testkjøring den 1. i måneden kl. 12:00.

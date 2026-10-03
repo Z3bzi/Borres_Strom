@@ -2,7 +2,7 @@
 interface Steg { mål: string; tittel: string; tekst: string; }
 
 const STEG: Steg[] = [
-  { mål: '#sim-batteri', tittel: 'Dette er batteriet', tekst: 'Måleren viser hvor fullt batteriet er. Merkene viser hvor styringen reagerer: under 30 % starter generatoren, over 90 % stopper den.' },
+  { mål: '#sim-batteri', tittel: 'Dette er batteriet', tekst: 'Måleren viser hvor fullt batteriet er. Merkene viser hvor styringen reagerer: under 30 % starter generatoren, over 80 % stopper den.' },
   { mål: '#sim-sol', tittel: 'Her ser du sola', tekst: 'Hvor mye solcellene gir akkurat nå, og hvor mye hytta bruker. Energiflyten under viser hvor strømmen går.' },
   { mål: '#sim-transport', tittel: 'Trykk her for å spole tiden', tekst: 'Spill av, og velg hvor fort tiden skal gå. 10 minutter hyttetid per sekund gjør et døgn på to og et halvt minutt.' },
   { mål: '#sim-scenarioer', tittel: 'Velg et scenario', tekst: 'Start med «Vanlig sommerdag i juli», og prøv så en grå helg, en kald morgen og feil. Hendelsesloggen forklarer hva styringen gjør, og hvorfor.' },

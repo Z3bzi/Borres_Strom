@@ -36,7 +36,7 @@ export const SCENARIOER: Scenario[] = [
   {
     id: 'september',
     tittel: 'Overskyet helg i september',
-    beskrivelse: 'Fredag kveld til søndag kveld med seks personer og grått vær, etter en grå uke som har tatt batteriet ned til 60 %. Batteriet holder ikke hele helgen alene, så generatoren starter av seg selv.',
+    beskrivelse: 'Fredag kveld til søndag kveld med seks personer og grått vær, etter en grå uke som har tatt batteriet ned til 60 %. Lørdag kveld er batteriet under 40 %, så aggregatet lader opp før natta.',
     oppsett: { start: { aar: 2026, maned: 8, dag: 18, time: 18 }, varighetS: 48 * 3600, vaer: 'overskyet', folk: 6, startNiva: 60, seed: 7 },
     fart: 1200,
     oppsummering: (st) =>
@@ -45,7 +45,7 @@ export const SCENARIOER: Scenario[] = [
   {
     id: 'kald',
     tittel: 'Kald morgen i april',
-    beskrivelse: 'Påskehelg med to personer, frost og lavt batteri før soloppgang. Styringen forvarmer generatoren i 20 minutter før den starter.',
+    beskrivelse: 'Påskehelg med to personer, frost og lavt batteri midt på natta. Styringen venter til nattstoppen er over kl. 07:00, forvarmer i 20 minutter og starter.',
     oppsett: { start: { aar: 2026, maned: 3, dag: 4, time: 4 }, varighetS: 6 * 3600, vaer: 'delvis', folk: 2, startNiva: 31, seed: 3, tempOffset: -4 },
     fart: 300,
     oppsummering: (st) =>
@@ -54,7 +54,7 @@ export const SCENARIOER: Scenario[] = [
   {
     id: 'tom',
     tittel: 'Ingen på hytta i oktober',
-    beskrivelse: 'En grå uke i slutten av oktober med tom hytte og batteriet på 40 %. Standby er lite med 5G-ruter, så sola klarer nesten alt. Når batteriet likevel blir lavt, tar generatoren en tur av seg selv.',
+    beskrivelse: 'En grå uke i slutten av oktober med tom hytte og batteriet på 40 %. Standby er lite med 5G-ruter, så sola klarer nesten alt. Første kveld lader aggregatet opp, og resten av uka klarer sola seg.',
     oppsett: { start: { aar: 2026, maned: 9, dag: 20, time: 0 }, varighetS: 7 * 24 * 3600, vaer: 'overskyet', folk: 0, startNiva: 40, seed: 5 },
     fart: 3600,
     oppsummering: (st) =>
@@ -101,14 +101,14 @@ export const SCENARIOER: Scenario[] = [
   {
     id: 'lavt',
     tittel: 'Batteriet blir veldig lavt',
-    beskrivelse: 'Kveld med mye forbruk og nesten tomt batteri. Under 15 % kobler styringen fra pumpe, ladere og verktøy til generatoren går.',
+    beskrivelse: 'Kveld med mye forbruk og nesten tomt batteri. Under 15 % kobler styringen fra pumpe, ladere og verktøy til generatoren går. Kl. 22 stopper nattstoppen ladingen.',
     oppsett: {
       start: { aar: 2026, maned: 8, dag: 26, time: 20, minutt: 30 }, varighetS: 3 * 3600, vaer: 'overskyet', folk: 6, startNiva: 16, seed: 2,
       hendelser: [{ etterS: 30, type: 'kloyv' }],
     },
     fart: 60,
-    oppsummering: (st) =>
-      `Batteriet var nede i ${prosent(st.minNiva)}. Ikke-vitale laster var koblet fra i ${varighet(st.frakobletS)}, mens lys, kjøleskap og overvåking gikk hele tiden. ${generatorSetning(st)}`,
+    oppsummering: (st, h) =>
+      `Batteriet var nede i ${prosent(st.minNiva)}. Ikke-vitale laster var koblet fra i ${varighet(st.frakobletS)}, mens lys, kjøleskap og overvåking gikk hele tiden. ${generatorSetning(st)}${h.logg.some((l) => l.tekst.startsWith('Klokka er 22:00')) ? ' Kl. 22:00 stoppet nattstoppen ladingen; er batteriet fortsatt lavt, fortsetter den kl. 07:00.' : ''}`,
   },
   {
     id: 'test',

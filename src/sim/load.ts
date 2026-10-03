@@ -102,3 +102,13 @@ export function dogEnergiWh(folk: number): number {
   for (let s = 0; s < 86400; s++) wh += last(s, folk, false, false).totalW / 3600;
   return wh;
 }
+
+/**
+ * Energi fra batteriet (Wh DC, etter vekselretterens tap) fra kl. 20:00 til 07:00, altså tiden fra
+ * siste mulige kveldslading til nattstoppen er over. Brukes til å sette kveldsgrensen.
+ */
+export function nattbehovWh(folk: number, virkningsgrad = 0.9): number {
+  let wh = 0;
+  for (let s = 20 * 3600; s !== 7 * 3600; s = (s + 1) % 86400) wh += last(s, folk, false, false).totalW / 3600;
+  return wh / virkningsgrad;
+}

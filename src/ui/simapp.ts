@@ -18,7 +18,7 @@ const $ = <T extends HTMLElement = HTMLElement>(sel: string): T => {
 
 const GENERATOR_INFO: Record<Tilstand['generator'], string> = {
   av: 'Står stille', forvarmer: 'Varmer opp før start (20 min)', starter: 'Startsignal sendt, venter på svar',
-  gaar: 'Lader batteriet', hviler: 'Må hvile 10 min før ny start', feil: 'Trenger tilsyn',
+  gaar: 'Lader batteriet', hviler: 'Må hvile 10 min før ny start', natt: 'Nattstopp 22–07, starter tidligst 07:00', feil: 'Trenger tilsyn',
 };
 
 export class SimApp {

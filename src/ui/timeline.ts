@@ -68,9 +68,9 @@ export class Tidslinje {
     c.fillStyle = css('--ink-2');
     c.textAlign = 'right';
     c.textBaseline = 'middle';
-    for (const p of [0, 30, 90, 100]) {
+    for (const p of [0, 30, 80, 100]) {
       c.beginPath(); c.moveTo(venstre, yB(p)); c.lineTo(venstre + plotW, yB(p)); c.stroke();
-      if (p === 30 || p === 90) c.fillText(`${p} %`, venstre - 4, yB(p));
+      if (p === 30 || p === 80) c.fillText(`${p} %`, venstre - 4, yB(p));
     }
     c.setLineDash([3, 4]);
     c.strokeStyle = css('--alarm');

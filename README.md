@@ -11,7 +11,7 @@ Krever Node.js 20 eller nyere.
 ```bash
 npm install
 npm run dev        # utviklingsserver, åpne adressen som vises
-npm test           # kjører alle tester (11 scenarioer fra logo_sim.py + energimodell)
+npm test           # kjører alle tester (13 scenarioer fra logo_sim.py + energimodell)
 npm run build      # bygger ferdige filer til dist/
 npm run preview    # viser dist/ lokalt
 ```
@@ -36,7 +36,7 @@ Skal siden ligge på et eget domene eller på roten, bygg med `BASE_PATH=/ npm r
 index.html            hele siden (tekst og struktur)
 src/styles.css        utseende
 src/main.ts           kobler sammen seksjonene
-src/sim/logic.ts      styringslogikken, port av kilder/logo_sim.py (modul 1–10)
+src/sim/logic.ts      styringslogikken, port av kilder/logo_sim.py (modul 1–11)
 src/sim/data.ts       tall fra kilder/hytte_kapasitet.xlsx
 src/sim/solar.ts      solproduksjon time for time (Kragerø, 58,9° N)
 src/sim/load.ts       forbruksprofil fra lastlisten
@@ -44,7 +44,7 @@ src/sim/temperature.ts omtrentlig temperaturkurve
 src/sim/cabin.ts      hele anlegget: energimodell + styring + hendelseslogg
 src/sim/scenarios.ts  de ni ferdige scenarioene
 src/ui/               måler, energiflyt-diagram, forløpsdiagram, telefon, årsdiagram, omvisning
-tests/logic.test.ts   de 11 scenarioene fra logo_sim.py, portet 1:1
+tests/logic.test.ts   de 13 scenarioene fra logo_sim.py, portet 1:1
 tests/energy.test.ts  energimodell og hele anlegget
 kilder/               kildefilene (overlevering, regneark, referansesimulering)
 ```
@@ -57,6 +57,8 @@ Simuleringskjernen i `src/sim/` er ren TypeScript uten DOM, så den kan testes o
 - 5G-ruter med Wi-Fi på anslått 15 W i stedet for Starlink (70 W) og egen ruter (12 W), så standby er 48 W og dagsforbruket med folk ca. 3,2 kWh (`RUTER_5G_W` i `src/sim/data.ts`). Regnearket regner fortsatt med Starlink.
 - Ikke-vitale laster ved lastfrakobling: vannpumpe, ladere, nettbrett, verktøy og vedkløyver.
 - Hytta og anlegget er avslått fra november til mars (`ANLEGG_AV` i `src/sim/data.ts`): null forbruk, ingen generator.
+- Aggregatet lader til 80 % (`LADES_TIL` i `src/sim/logic.ts`).
+- Modul 11: nattstopp 22:00–07:00, og kveldslading kl. 17–20 under 40 % (`KVELD_GRENSE`). Grensen er 15 % + nattbehovet for 6 personer med 25 % margin, rundet opp, og låses av en test.
 - Månedlig testkjøring den 1. i måneden kl. 12:00.
 - Batteristyringen slår av vekselretteren under 10 % og på igjen over 15 %.
 

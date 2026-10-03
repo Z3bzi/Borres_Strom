@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { daglengde, soldag, klarProduksjonW, Skyer, produksjonW } from '../src/sim/solar';
 import { dogEnergiWh, last } from '../src/sim/load';
-import { DAGSFORBRUK_WH, FORBRUK_DC_PER_DOGN, STANDBY_W, manedsBalanse, PV_KWP, produksjonPerDogn } from '../src/sim/data';
+import { DAGSFORBRUK_WH, FORBRUK_DC_PER_DOGN, STANDBY_W, dimensjonering, manedsBalanse, PV_KWP, produksjonPerDogn } from '../src/sim/data';
 import { Hytte } from '../src/sim/cabin';
 import { SCENARIOER } from '../src/sim/scenarios';
 import { temperatur } from '../src/sim/temperature';
@@ -82,6 +82,20 @@ describe('energibalanse (regneark)', () => {
     expect(b[6]!.produksjonKWh).toBeCloseTo(285.12, 1);
   });
 
+});
+
+describe('dimensjonering (tallene i teksten på siden)', () => {
+  it('stemmer med tallene som står på siden', () => {
+    const d = dimensjonering();
+    expect(d.vekselretterKontW).toBeCloseTo(3323.75, 2); // «ca. 3,3 kW»
+    expect(d.toppW).toBeCloseTo(9348.75, 2); // «ca. 9,3 kW»
+    expect(d.autonomiDogn).toBeCloseTo(1.5, 1); // «ca. 1,5 døgn»
+    expect(d.helgDekning).toBeCloseTo(0.75, 2); // «ca. 75 %»
+    expect(d.batteriNodvendigKWh).toBeCloseTo(5.6, 1); // «ca. 5,6 kWh»
+    expect(d.brukbartKWh).toBeCloseTo(6.72, 2); // «6,7 kWh»
+    expect(d.kwpSeptember).toBeCloseTo(1.47, 2); // «ca. 1,5 kWp»
+    expect(d.generatorMinW).toBeCloseTo(3323.75, 2); // «ca. 3,3 kW»
+  });
 });
 
 describe('temperatur', () => {

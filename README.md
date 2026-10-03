@@ -60,4 +60,4 @@ Simuleringskjernen i `src/sim/` er ren TypeScript uten DOM, så den kan testes o
 - Månedlig testkjøring den 1. i måneden kl. 12:00.
 - Batteristyringen slår av vekselretteren under 10 % og på igjen over 15 %.
 
-Søk etter `TODO Sebastian` for punkter som venter på innspill.
+Utstyr som ikke er valgt, er merket «Ikke valgt» på siden. Tallene i teksten låses av testen «dimensjonering» i `tests/energy.test.ts`.

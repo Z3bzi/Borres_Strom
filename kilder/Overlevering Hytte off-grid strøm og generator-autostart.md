@@ -4,7 +4,9 @@ Oct 3, 2026 · @Sebastian Alveberg
 
 ## Sammendrag
 
-Sebastian bygger selv strømautomatikken til en helt off-grid sommerhytte på Børresholmen, Kragerø: solceller og batteri, med et dieselaggregat i eget skur 30 m fra hytta som skal autostarte. Styringen er en Siemens LOGO! 9 (6ED1052-1MD08-0BA3, 12/24RCE) programmert i LOGO!Soft Comfort V9 (kun FBD, ikke SCL).
+Sebastian bygger selv strømautomatikken til en helt off-grid sommerhytte på Børresholmen, Kragerø: solceller og batteri, med et dieselaggregat i eget skur 30 m fra hytta som skal autostarte. Styringen er en Arduino Opta RS485 (AFX00001) programmert i FBD i Arduino PLC IDE. Den erstatter Siemens LOGO! 9 (6ED1052-1MD08-0BA3, 12/24RCE), som var planlagt fram til 4. oktober 2026.
+
+**Endring 4. oktober 2026:** PLS-en er byttet fra LOGO! 9 til Arduino Opta RS485. I/O-planen og logikken er uendret, men LOGO!-blokkene oversettes til standardblokker (se «PLS: Arduino Opta RS485» under). Seksjonene under omtaler fortsatt LOGO! der teksten er skrevet før byttet.
 
 **Status 3. oktober 2026:** dimensjonering, I/O-plan og logikkspesifikasjon er ferdig, og I/O er lagt inn i Soft Comfort. Nettverksvisningen er delvis satt opp. Generator og AMF/autostart-kort er ikke valgt, og SOC-kilden er ikke valgt.
 
@@ -47,9 +49,39 @@ Batteriet på ca. 8,4 kWh gir ett døgns autonomi, og anbefalt solcelleeffekt er
 
 Tallene kommer fra regnearket `hytte_kapasitet.xlsx` (arkene Forutsetninger, Last, Resultat, Sol Kragerø, Bruksmønster). Verdiene i tabellen er fra siste beregning, men batteri-, vekselretter- og solcelletallene er regnet før standby-lasten ble satt til 115 W og er ikke oppdatert.
 
-## LOGO! I/O-plan
+## PLS: Arduino Opta RS485
 
-LOGO! 12/24RCE har 8 digitale innganger og 4 reléutganger. Alle sikkerhetssignaler er koblet slik at brudd gir stopp.
+Valgt 4. oktober 2026. Opta er utviklet av Finder og Arduino og selges også som Finder Opta Plus (8A.04.9.024.8310).
+
+| Egenskap | Verdi |
+| --- | --- |
+| Innganger | 8, hver kan brukes digitalt eller som 0–10 V |
+| Utganger | 4 releer, 10 A / 250 V AC |
+| Kommunikasjon | Ethernet (Modbus TCP), RS485 (Modbus RTU), USB-C |
+| Programmering | Arduino PLC IDE med IEC 61131-3 (FBD, LD, ST, SFC, IL). Lisensen følger med enheten. |
+| Klokke | Holder tiden typisk 10 døgn uten strøm ved 25 °C, NTP via Ethernet |
+| Forsyning | 12–24 V DC nominelt, 10,2–27,6 V tillatt ifølge databladet (må bekreftes) |
+| Temperatur | -20 til +50 °C |
+| Betjening | Ikke display. Programmerbar USER-knapp og fire status-LED-er. |
+| Utvidelse | D1608E (16 innganger og 8 releer), D1608S (med halvlederreleer), A0602 (analog) |
+
+**Hvorfor byttet:** Modbus TCP-klient er bekreftet, alle innganger kan brukes analogt, og RS485 lar autostart-kortet (for eksempel DSE7310) kobles direkte med Modbus RTU. Det fjerner flere av de åpne punktene for LOGO! 9.
+
+**Oversettelse av LOGO!-blokkene i logikken:**
+
+| LOGO! | Opta (IEC 61131-3) |
+| --- | --- |
+| On-delay / Off-delay | TON / TOF |
+| Latching relay (reset-dominant) | RS |
+| Wiping relay | TP |
+| Analog threshold trigger | Sammenligning med hysterese (egen funksjonsblokk) |
+| Weekly timer / Yearly timer | Sammenligning mot klokka |
+| Asynchronous pulse generator | Blinker av TON og TOF |
+| Message text og Softkey | USER-knappen og varsel via Pi-en |
+
+## I/O-plan
+
+I/O-planen er den samme for Opta som for LOGO! 12/24RCE: 8 innganger og 4 reléutganger. Alle sikkerhetssignaler er koblet slik at brudd gir stopp.
 
 | Kanal | Funksjon | Merknad |
 | --- | --- | --- |
@@ -66,7 +98,7 @@ LOGO! 12/24RCE har 8 digitale innganger og 4 reléutganger. Alle sikkerhetssigna
 | Q3 | Hjelpestrøm skur | Forvarming/lader |
 | Q4 | Alarm | Pulserende |
 
-**Utgangene:** relékontaktene tåler 10 A resistivt og 3 A induktivt og har ingen kortslutningsbeskyttelse. Bruk ekstern sikring og frihjulsdiode eller RC-ledd på induktive laster. LOGO!-feil gir da automatisk stopp og lastfrakobling.
+**Utgangene:** relékontaktene tåler 10 A ved 250 V AC og har ingen kortslutningsbeskyttelse. Bruk ekstern sikring og frihjulsdiode eller RC-ledd på induktive laster. Feil i PLS-en gir da automatisk stopp og lastfrakobling.
 
 ## FBD-logikk
 
@@ -105,11 +137,11 @@ Anbefalingen er et ferdig dieselaggregat med autostart-kort montert, og LOGO! se
 
 ## Nettverk og fjernovervåking
 
-Alle enheter har statisk IP, og LOGO!s webserver skal ikke eksponeres mot internett.
+Alle enheter har statisk IP, og PLS-en skal ikke eksponeres mot internett.
 
 | Enhet | IP | Status |
 | --- | --- | --- |
-| LOGO! 9 | 192.168.0.2 | Lagt inn |
+| PLS (Arduino Opta RS485) | 192.168.0.2 | Valgt |
 | Generator/AMF-kort | 192.168.0.3 | Lagt inn i Soft Comfort |
 | SOC-enhet | 192.168.0.4 | Planlagt, ikke valgt |
 | Raspberry Pi | 192.168.0.5 | Planlagt |
@@ -123,6 +155,11 @@ Alle enheter har statisk IP, og LOGO!s webserver skal ikke eksponeres mot intern
 
 Dette er ikke bekreftet og må sjekkes mot manual eller i simulering før det bygges på.
 
+- **Forsyningsspenning til Opta:** 10,2–27,6 V DC ifølge databladet (ikke lest direkte, må bekreftes). Et 24 V LiFePO4-batteri (8S) når 28,4–28,8 V under lading, så ved 24 V eller 48 V trengs en DC-DC-omformer. Avhenger av systemspenningen, som ikke er valgt.
+- At Opta kan være Modbus TCP-klient (SOC fra 192.168.0.4) og server (heartbeat fra Pi) samtidig i PLC IDE. Test før bygging.
+- Temperatur til forvarming: leses over Modbus. Skal den måles direkte på Opta, må føleren ha 0–10 V-utgang.
+- Sommertid og NTP-synkronisering av klokka i Opta (modul 10 og 11).
+- Punktene under om LOGO! 9 (Soft Comfort, NAI, AM4 og blokkretninger) gjelder ikke lenger etter byttet til Opta, men står igjen som historikk.
 - LOGO! 9 som Modbus TCP-klient, og Modbus RTU-kobling: oppgitt av Sebastian, men ikke funnet i databladet (som nevner MQTT). Sjekk manualen.
 - Hvilke innganger som kan brukes som analoge (på LOGO! 8 er det I1, I2, I7 og I8; ikke bekreftet for 9). Det påvirker I-planen, siden I7 er BMS OK.
 - Om nettverks-analoginnganger (NAI) og UDF finnes i V9, og hvilke menynavn som gjelder.
@@ -135,9 +172,9 @@ Dette er ikke bekreftet og må sjekkes mot manual eller i simulering før det by
 ## Neste steg og filer
 
 1. Velg aggregat (se kravene over) og få manual og koblingsskjema for autostart-kortet.
-2. Velg SOC-kilde (192.168.0.4) og finn Modbus-registerkartet. Deretter kobles SOC inn i LOGO! og terskelmodulen (2) bygges.
+2. Velg SOC-kilde (192.168.0.4) og finn Modbus-registerkartet. Deretter kobles SOC inn i PLS-en og terskelmodulen (2) bygges.
 3. Bygg og simuler FBD modul for modul, i rekkefølgen KLAR, SOC-terskler, forvarming, Q1-lagring, stopp og hvile, alarmer, lastfrakobling, datavakt og testkjøring.
-4. Verifiser de uverifiserte punktene over mot LOGO! 9-manualen.
+4. Legg inn I/O-planen i Arduino PLC IDE, aktiver lisensen og verifiser de åpne punktene over mot Opta-databladet.
 5. Sett opp Pi, VPN og heartbeat.
 6. Elektriker for skur, kabling, jording og overspenningsvern. Avklar forsikring.
 
